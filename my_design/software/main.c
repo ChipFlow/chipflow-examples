@@ -1,17 +1,90 @@
 #include <stdint.h>
 #include "generated/soc.h"
 
+typedef unsigned guint;
+typedef uint8_t guint8;
+
+#include "umu.h"
+#include "nya_a.h"
+
 char uart_getch_block(volatile uart_regs_t *uart) {
     while (!(uart->rx.status & 0x1))
         ;
     return uart->rx.data;
 }
 
+static void oled_cmd_mode() {
+    GPIO_1->setclr = GPIO_PIN0_CLEAR;
+}
+
+static void oled_data_mode() {
+    GPIO_1->setclr = GPIO_PIN0_SET;
+}
+
+static void oled_pwr_on() {
+    oled_cmd_mode();
+    spi_xfer(USER_SPI_0, 0xA072, 16, true); // set remap, RGB
+    spi_xfer(USER_SPI_0, 0xA100, 16, true); // start line
+    spi_xfer(USER_SPI_0, 0xA200, 16, true); // display offset
+    spi_xfer(USER_SPI_0, 0xA83F, 16, true); // 1/64 duty
+    spi_xfer(USER_SPI_0, 0x8EAD, 16, true); // master
+    spi_xfer(USER_SPI_0, 0xB00B, 16, true); // power mode
+    spi_xfer(USER_SPI_0, 0xB13B, 16, true); // precharge
+    spi_xfer(USER_SPI_0, 0xB3F0, 16, true); // clock divide
+    spi_xfer(USER_SPI_0, 0x8A64, 16, true); // precharge a
+    spi_xfer(USER_SPI_0, 0x8B78, 16, true); // precharge b
+    spi_xfer(USER_SPI_0, 0x8C64, 16, true); // precharge c
+    spi_xfer(USER_SPI_0, 0xBB3A, 16, true); // precharge level
+    spi_xfer(USER_SPI_0, 0xBE3E, 16, true); // vcomh
+    spi_xfer(USER_SPI_0, 0x8706, 16, true); // master current
+
+    spi_xfer(USER_SPI_0, 0xAF, 8, true); // power on
+
+
+}
+
+static void oled_set_contrast(uint8_t contrast) {
+    oled_cmd_mode();
+    spi_xfer(USER_SPI_0, (0x81U << 8U) | contrast, 16, true);
+}
+
+static void oled_set_column_addr(uint8_t low, uint8_t high) {
+    oled_cmd_mode();
+    spi_xfer(USER_SPI_0, (0x15U << 16U) | (low << 8U) | high, 24, true);
+}
+
+static void oled_set_row_addr(uint8_t low, uint8_t high) {
+    oled_cmd_mode();
+    spi_xfer(USER_SPI_0, (0x75U << 16U) | (low << 8U) | high, 24, true);
+}
+
+static void oled_put_image(const uint8_t *data) {
+    oled_set_column_addr(0, 95);
+    oled_set_row_addr(0, 63);
+    oled_data_mode();
+    for (unsigned y = 0; y < 64; y++) {
+        for (unsigned x = 0; x < 96; x++) {
+            unsigned word = ((63-y)*96 + x) * 2;
+            spi_xfer(USER_SPI_0, data[word] | data[word + 1] << 8U, 16, (y != 63) || (x != 95));
+        }
+    }
+}
+
 void main() {
+
+    GPIO_0->mode = GPIO_PIN0_PUSH_PULL | GPIO_PIN1_PUSH_PULL \
+                 | GPIO_PIN2_PUSH_PULL | GPIO_PIN3_PUSH_PULL \
+                 | GPIO_PIN4_PUSH_PULL | GPIO_PIN5_PUSH_PULL \
+                 | GPIO_PIN6_PUSH_PULL | GPIO_PIN7_PUSH_PULL;
+
+    GPIO_0->output = 0x55;
+
     uart_init(UART_0, 25000000/115200);
     uart_init(UART_1, 25000000/115200);
 
     puts("🐱: nyaa~!\r\n");
+
+    GPIO_0->output = 0xAA;
 
     puts("SoC type: ");
     puthex(SOC_ID->type);
@@ -28,84 +101,18 @@ void main() {
     spiflash_set_quad_mode(SPIFLASH);
     puts("Quad mode\n");
 
-    //
+    GPIO_1->mode = GPIO_PIN0_PUSH_PULL | GPIO_PIN1_PUSH_PULL;
+    GPIO_1->output = 0x2; // display out of reset
 
-    GPIO_1->mode = GPIO_PIN4_PUSH_PULL | GPIO_PIN5_PUSH_PULL \
-                 | GPIO_PIN6_PUSH_PULL | GPIO_PIN7_PUSH_PULL;
-    GPIO_1->output = 0x50;
-    GPIO_1->setclr = GPIO_PIN4_CLEAR | GPIO_PIN5_SET \
-                   | GPIO_PIN6_CLEAR | GPIO_PIN7_SET;
-    GPIO_1->mode = GPIO_PIN4_INPUT_ONLY | GPIO_PIN5_INPUT_ONLY \
-		 | GPIO_PIN6_INPUT_ONLY | GPIO_PIN7_INPUT_ONLY;
+    spi_init(USER_SPI_0, 1);
 
-    uart_puts(UART_1, "ABCD");
+    oled_pwr_on();
 
-    MOTOR_PWM0->numr = 0x1F;
-    MOTOR_PWM0->denom = 0xFF;
-    MOTOR_PWM0->conf = 0x3;
+    while(1) {
+        oled_put_image(nya_umu.pixel_data);
+        //for (int i = 0; i < 2000000; i++) asm("nop");
+        oled_put_image(nya_a.pixel_data);
+        //for (int i = 0; i < 2000000; i++) asm("nop");
+    }
 
-    MOTOR_PWM1->numr = 0x3F;
-    MOTOR_PWM1->denom = 0xFF;
-    MOTOR_PWM1->conf = 0x3;
-
-    MOTOR_PWM9->numr = 0x7F;
-    MOTOR_PWM9->denom = 0xFF;
-    MOTOR_PWM9->conf = 0x3;
-
-    /*
-    PDM0->outval = 0xFF;
-    PDM1->outval = 0x7F;
-    PDM2->outval = 0x3F;
-
-    PDM0->conf = 0x1;
-    PDM1->conf = 0x1;
-    PDM2->conf = 0x0;
-    */
-
-    puts("GPIO: ");
-    puthex(GPIO_1->input);
-    puts(" ");
-    puthex(GPIO_1->input);
-    puts("\n");
-
-    puts("UART1: ");
-    putc(uart_getch_block(UART_1));
-    puts(" ");
-    putc(uart_getch_block(UART_1));
-    puts("\n");
-
-    puts("SPI: ");
-
-    spi_init(USER_SPI_0, 2);
-
-    // test 8 bit transfer
-    puthex(spi_xfer(USER_SPI_0, 0x5A, 8, true));
-    puts(" ");
-    // test an odd 21 bit transfer
-    puthex(spi_xfer(USER_SPI_0, 0x123456, 21, true));
-    puts("\n");
-
-    i2c_init(I2C_0, 2);
-
-    i2c_start(I2C_0);
-
-    puts("I2C: ");
-    putc(i2c_write(I2C_0, 0xA0) ? 'a' : 'n');
-    putc(i2c_write(I2C_0, 0x33) ? 'a' : 'n');
-    i2c_start(I2C_0);
-    putc(i2c_write(I2C_0, 0xA1) ? 'a' : 'n');
-    puts(" ");
-    puthex(i2c_read(I2C_0));
-    puts("\n");
-    i2c_stop(I2C_0);
-
-    while (1) {
-        // // Listen for button presses
-        // next_buttons = BTN_GPIO->in;
-        // if ((next_buttons & 1U) && !(last_buttons & 1U))
-        // 	puts("button 1 pressed!\n");
-        // if ((next_buttons & 2U) && !(last_buttons & 2U))
-        // 	puts("button 2 pressed!\n");
-        // last_buttons = next_buttons;
-    };
 }
