@@ -17,6 +17,9 @@ from amaranth_orchard.io import SPISignature, SPIPeripheral
 from amaranth_orchard.io import I2CSignature, I2CPeripheral
 
 from amaranth_cv32e40p.cv32e40p import CV32E40P, DebugModule
+from minerva.core import Minerva
+
+
 from chipflow_lib.platforms import InputPinSignature, OutputPinSignature
 from .ips.pwm import PWMPins, PWMPeripheral
 # from .ips.pdm import PDMPeripheral
@@ -119,29 +122,29 @@ class MySoC(wiring.Component):
 
         # CPU
 
-        cpu = CV32E40P(config="default", reset_vector=self.bios_start, dm_haltaddress=self.debug_base+0x800)
+        cpu = Minerva(reset_address=self.bios_start, with_muldiv=True)
         wb_arbiter.add(cpu.ibus)
         wb_arbiter.add(cpu.dbus)
 
         m.submodules.cpu = cpu
 
         # Debug
-        debug = DebugModule()
-        wb_arbiter.add(debug.initiator)
-        wb_decoder.add(debug.target, name="debug", addr=self.debug_base)
-        m.d.comb += cpu.debug_req.eq(debug.debug_req)
+        # debug = DebugModule()
+        # wb_arbiter.add(debug.initiator)
+        # wb_decoder.add(debug.target, name="debug", addr=self.debug_base)
+        # m.d.comb += cpu.debug_req.eq(debug.debug_req)
 
-        m.d.comb += [
-            debug.jtag_tck.eq(self.cpu_jtag.tck.i),
-            debug.jtag_tms.eq(self.cpu_jtag.tms.i),
-            debug.jtag_tdi.eq(self.cpu_jtag.tdi.i),
-            debug.jtag_trst.eq(self.cpu_jtag.trst.i),
-            self.cpu_jtag.tdo.o.eq(debug.jtag_tdo),
-        ]
-        # TODO: TRST
+        # m.d.comb += [
+        #     debug.jtag_tck.eq(self.cpu_jtag.tck.i),
+        #     debug.jtag_tms.eq(self.cpu_jtag.tms.i),
+        #     debug.jtag_tdi.eq(self.cpu_jtag.tdi.i),
+        #     debug.jtag_trst.eq(self.cpu_jtag.trst.i),
+        #     self.cpu_jtag.tdo.o.eq(debug.jtag_tdo),
+        # ]
+        # # TODO: TRST
 
-        m.submodules.debug = debug
-        # SPI flash
+        # m.submodules.debug = debug
+        # # SPI flash
 
         spiflash = QSPIFlash(addr_width=24, data_width=32)
         wb_decoder .add(spiflash.wb_bus, addr=self.mem_spiflash_base)
