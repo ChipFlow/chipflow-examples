@@ -9,54 +9,68 @@ name: CI
 jobs:
 
   submit:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        design: ['mcu_soc', 'minimal']
     steps:
       - name: Check out source code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+
       - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
+
       - name: Set up PDM
         uses: pdm-project/setup-pdm@v4
         with:
           python-version-file: pyproject.toml
           cache-dependency-path: pyproject.toml
           cache: true
+
       - name: Relock PDM
         run: pdm lock -d
+
       - name: Install dependencies
         run: |
           pdm install -d
+
       - name: Lock pins
+        working-directory: ./${{ matrix.design }}
         run: pdm run chipflow pin lock
+
       - name: Submit to cloud backend
+        working-directory: ./${{ matrix.design }}
         run: pdm run chipflow silicon submit --wait
         env:
           CHIPFLOW_API_ORIGIN: 'https://build-staging.chipflow.org'
           CHIPFLOW_API_KEY_ID: ${{ secrets.CHIPFLOW_API_KEY_ID }}
-          CHIPFLOW_API_KEY_SECRET: ${{ secrets.CHIPFLOW_API_KEY_SECRET }}
+          CHIPFLOW_API_KEY_SECRET: ${{ secrets.CHIPFLOW_API_KEY_SECRET }}k
 
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        design: ['mcu_soc', 'minimal']
     steps:
       - name: Check out source code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+
       - name: Set up PDM
         uses: pdm-project/setup-pdm@v4
         with:
           python-version-file: pyproject.toml
           cache-dependency-path: pyproject.toml
           cache: true
+
       - name: Relock PDM
         run: |
           pdm lock -d
+
       - name: Install dependencies
         run: |
           pdm install -d
+
       - name: Cache YoWASP build products
         uses: actions/cache@v4
         with:
@@ -64,11 +78,22 @@ jobs:
           key: YoWASP-${{ runner.os }}-${{ hashFiles('./.venv/**/*.wasm') }}
           restore-keys: |
             YoWASP-${{ runner.os }}-
+
       - name: Lock pins
+        working-directory: ./${{ matrix.design }}
         run: pdm run chipflow pin lock
-      - name: Run tests
+
+      - name: Run unit tests
+        working-directory: ./${{ matrix.design }}
+        run: |
+          pdm test
+
+      - name: Run simulation tests
+        working-directory: ./${{ matrix.design }}
         run: |
           make sim-check
+
       - name: Test submit dry run
+        working-directory: ./${{ matrix.design }}
         run: |
           pdm run chipflow silicon submit --dry-run
