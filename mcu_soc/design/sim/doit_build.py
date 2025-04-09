@@ -4,12 +4,13 @@ import importlib.resources
 
 
 OUTPUT_DIR  = "./build/sim"
-SOURCE_DIR  = importlib.resources.files("my_design") / "sim"
+COMMON_DIR  = importlib.resources.files("common") / "sim"
+SOURCE_DIR  = importlib.resources.files("mcu_soc") / "design/sim"
 RUNTIME_DIR = importlib.resources.files("yowasp_yosys") / "share/include/backends/cxxrtl/runtime"
 
 ZIG_CXX  = f"{sys.executable} -m ziglang c++"
 CXXFLAGS = f"-O3 -g -std=c++17 -Wno-array-bounds -Wno-shift-count-overflow -fbracket-depth=1024"
-INCLUDES = f"-I {OUTPUT_DIR} -I {SOURCE_DIR}/vendor -I {RUNTIME_DIR}"
+INCLUDES = f"-I {OUTPUT_DIR} -I {COMMON_DIR} -I {COMMON_DIR}/vendor -I {RUNTIME_DIR}"
 
 
 def task_build_sim_cxxrtl():
@@ -26,7 +27,7 @@ def task_build_sim():
     return {
         "actions": [
             f"{ZIG_CXX} {CXXFLAGS} {INCLUDES} -o {OUTPUT_DIR}/sim_soc{exe} "
-            f"{OUTPUT_DIR}/sim_soc.cc {SOURCE_DIR}/main.cc {SOURCE_DIR}/models.cc"
+            f"{OUTPUT_DIR}/sim_soc.cc {SOURCE_DIR}/main.cc {COMMON_DIR}/models.cc"
         ],
         "targets": [
             f"{OUTPUT_DIR}/sim_soc{exe}"
@@ -35,9 +36,9 @@ def task_build_sim():
             f"{OUTPUT_DIR}/sim_soc.cc",
             f"{OUTPUT_DIR}/sim_soc.h",
             f"{SOURCE_DIR}/main.cc",
-            f"{SOURCE_DIR}/models.cc",
-            f"{SOURCE_DIR}/models.h",
-            f"{SOURCE_DIR}/vendor/nlohmann/json.hpp",
-            f"{SOURCE_DIR}/vendor/cxxrtl/cxxrtl_server.h",
+            f"{COMMON_DIR}/models.cc",
+            f"{COMMON_DIR}/models.h",
+            f"{COMMON_DIR}/vendor/nlohmann/json.hpp",
+            f"{COMMON_DIR}/vendor/cxxrtl/cxxrtl_server.h",
         ],
     }

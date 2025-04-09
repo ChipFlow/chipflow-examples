@@ -1,0 +1,1 @@
+# A MCU-style SoC with CV32E40 RISC-V core; QSPI flash; GPIO, UART, I2C, SPI, PWM and PDM
