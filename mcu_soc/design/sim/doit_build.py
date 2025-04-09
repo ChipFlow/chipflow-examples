@@ -4,7 +4,7 @@ import importlib.resources
 
 
 OUTPUT_DIR  = "./build/sim"
-SOURCE_DIR  = importlib.resources.files("my_design") / "sim"
+SOURCE_DIR  = importlib.resources.files("mcu_soc") / "design/sim"
 RUNTIME_DIR = importlib.resources.files("yowasp_yosys") / "share/include/backends/cxxrtl/runtime"
 
 ZIG_CXX  = f"{sys.executable} -m ziglang c++"

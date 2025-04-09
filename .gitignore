@@ -17,6 +17,8 @@ __pycache__/
 
 # Amaranth build
 /build
+/mcu_soc/build
+
 
 # testbenches
 *.vcd
