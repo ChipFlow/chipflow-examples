@@ -32,7 +32,7 @@ jobs:
       - name: Lock pins
         run: pdm run chipflow pin lock
       - name: Submit to cloud backend
-        run: pdm run chipflow silicon submit
+        run: pdm run chipflow silicon submit --wait
         env:
           CHIPFLOW_API_ORIGIN: 'https://build-staging.chipflow.org'
           CHIPFLOW_API_KEY_ID: ${{ secrets.CHIPFLOW_API_KEY_ID }}
