@@ -2,14 +2,14 @@
 project_name = "chipflow-examples"
 
 [chipflow.top]
-soc = "my_design.design:MySoC"
+soc = "design.design:MySoC"
 
 [chipflow.steps]
-sim = "my_design.steps.sim:MySimStep"
-# board = "my_design.steps.board:MyBoardStep"
+sim = "design.steps.sim:MySimStep"
+# board = "design.steps.board:MyBoardStep"
 silicon = "chipflow_lib.steps.silicon:SiliconStep"
-software = "my_design.steps.software:MySoftwareStep"
-export = "my_design.steps.export_verilog:ExportVerilogStep"
+software = "design.steps.software:MySoftwareStep"
+export = "design.steps.export_verilog:ExportVerilogStep"
 
 [chipflow.clocks]
 default = 'sys_clk'
