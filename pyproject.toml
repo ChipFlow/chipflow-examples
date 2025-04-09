@@ -16,6 +16,7 @@ dependencies = [
     "amaranth[builtin-yosys]>=0.5.1",
     "amaranth-cv32e40p @ git+https://github.com/ChipFlow/amaranth-cv32e40p",
     "amaranth-orchard @ git+https://github.com/ChipFlow/amaranth-orchard",
+    "minerva @ git+https://github.com/minerva-cpu/minerva",
     "chipflow-lib @ git+https://github.com/ChipFlow/chipflow-lib.git",
     "ziglang==0.11.0",
     "amaranth-soc @ git+https://github.com/amaranth-lang/amaranth-soc",

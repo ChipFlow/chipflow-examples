@@ -1,0 +1,1 @@
+# A minimal SoC with Minerva RISC-V core; QSPI flash; GPIO, single UART
