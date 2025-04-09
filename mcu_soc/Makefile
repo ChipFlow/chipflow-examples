@@ -30,7 +30,7 @@ sim-run: sim-build software-build
 
 .PHONY: sim-check
 sim-check: sim-run
-	pdm run python -m my_design.tools.json_compare my_design/tests/events_reference.json build/sim/events.json
+	pdm run python -m tools.json_compare design/tests/events_reference.json build/sim/events.json
 
 .PHONY: silicon-prepare # Build RTLIL for the design
 silicon-prepare:
