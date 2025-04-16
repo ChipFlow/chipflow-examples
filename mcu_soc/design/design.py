@@ -10,7 +10,7 @@ from amaranth_soc.csr.wishbone import WishboneCSRBridge
 
 from amaranth_orchard.base import SoCID
 from amaranth_orchard.memory import QSPIFlash
-from amaranth_orchard.memory import SRAMPeripheral
+from amaranth_soc.wishbone.sram import WishboneSRAM
 from amaranth_orchard.io import GPIOPeripheral
 from amaranth_orchard.io import UARTPeripheral
 from amaranth_orchard.io import SPISignature, SPIPeripheral
@@ -154,8 +154,8 @@ class MySoC(wiring.Component):
 
         # SRAM
 
-        sram = SRAMPeripheral(size=self.sram_size)
-        wb_decoder.add(sram.bus, name="sram", addr=self.mem_sram_base)
+        sram = WishboneSRAM(size=self.sram_size, data_width=32, granularity=8)
+        wb_decoder.add(sram.wb_bus, name="sram", addr=self.mem_sram_base)
 
         m.submodules.sram = sram
 
