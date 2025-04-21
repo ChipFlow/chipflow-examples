@@ -28,6 +28,11 @@ board-load-ulx3s:
 sim-run: sim-build software-build
 	cd build/sim && ./sim_soc
 
+.PHONY: sim-run-cython # Run the Cython-based simulation
+sim-run-cython: sim-build software-build
+	cd /Users/roberttaylor/Code/ChipFlow/chipflow-examples && \
+	python -c "import sys; sys.path.insert(0, '.'); from my_design.steps.sim import MySimStep; MySimStep({'sim': {'use_cython': True}}).run()"
+
 .PHONY: sim-check
 sim-check: sim-run
 	pdm run python -m my_design.tools.json_compare my_design/tests/events_reference.json build/sim/events.json

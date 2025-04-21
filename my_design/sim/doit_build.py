@@ -41,3 +41,57 @@ def task_build_sim():
             f"{SOURCE_DIR}/vendor/cxxrtl/cxxrtl_server.h",
         ],
     }
+
+
+def task_build_cython_models():
+    return {
+        "actions": [
+            f"mkdir -p {OUTPUT_DIR}/cython_models",
+            f"cp {SOURCE_DIR}/cython_models/models.pyx {OUTPUT_DIR}/cython_models/",
+            f"cp {SOURCE_DIR}/cython_models/cxxrtl_wrap.h {OUTPUT_DIR}/cython_models/",
+            f"cp {SOURCE_DIR}/cython_models/setup.py {OUTPUT_DIR}/cython_models/",
+            f"cd {OUTPUT_DIR}/cython_models && pdm run python setup.py build_ext --inplace"
+        ],
+        "targets": [
+            f"{OUTPUT_DIR}/cython_models/models.*.so"  # Platform-dependent extension
+        ],
+        "file_dep": [
+            f"{SOURCE_DIR}/cython_models/models.pyx",
+            f"{SOURCE_DIR}/cython_models/cxxrtl_wrap.h",
+            f"{SOURCE_DIR}/cython_models/setup.py",
+            f"{OUTPUT_DIR}/sim_soc.h",
+        ],
+    }
+
+
+def task_build_cython_sim():
+    exe = ".exe" if os.name == "nt" else ""
+    
+    import sysconfig
+    python_include = sysconfig.get_path('include')
+    python_lib = sysconfig.get_config_var('LIBDIR')
+    
+    cython_includes = f"-I {SOURCE_DIR}/cython_models -I {python_include}"
+    cython_libs = f"-L {python_lib} -lpython{sysconfig.get_config_var('VERSION')}"
+
+    return {
+        "actions": [
+            f"{ZIG_CXX} {CXXFLAGS} {INCLUDES} {cython_includes} "
+            f"-o {OUTPUT_DIR}/cython_sim{exe} {OUTPUT_DIR}/sim_soc.cc {SOURCE_DIR}/cython_main.cc "
+            f"{cython_libs}"
+        ],
+        "targets": [
+            f"{OUTPUT_DIR}/cython_sim{exe}"
+        ],
+        "file_dep": [
+            f"{OUTPUT_DIR}/sim_soc.cc",
+            f"{OUTPUT_DIR}/sim_soc.h",
+            f"{SOURCE_DIR}/cython_main.cc",
+            f"{SOURCE_DIR}/cython_models/cxxrtl_wrap.h",
+            f"{SOURCE_DIR}/vendor/nlohmann/json.hpp",
+            f"{SOURCE_DIR}/vendor/cxxrtl/cxxrtl_server.h",
+        ],
+        "task_dep": [
+            "build_cython_models"
+        ]
+    }

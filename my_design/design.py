@@ -9,7 +9,7 @@ from amaranth_soc import csr, wishbone
 from amaranth_soc.csr.wishbone import WishboneCSRBridge
 
 from amaranth_orchard.base import SoCID
-from amaranth_orchard.memory import QSPIFlash
+from amaranth_orchard.memory.qspi_flash import QSPIFlash  # Use the actual QSPIFlash class
 from amaranth_orchard.memory import SRAMPeripheral
 from amaranth_orchard.io import GPIOPeripheral
 from amaranth_orchard.io import UARTPeripheral
