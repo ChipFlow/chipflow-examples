@@ -6,10 +6,8 @@ soc = "design.design:MySoC"
 
 [chipflow.steps]
 sim = "design.steps.sim:MySimStep"
-# board = "design.steps.board:MyBoardStep"
 silicon = "chipflow_lib.steps.silicon:SiliconStep"
 software = "design.steps.software:MySoftwareStep"
-export = "design.steps.export_verilog:ExportVerilogStep"
 
 [chipflow.clocks]
 default = 'sys_clk'
