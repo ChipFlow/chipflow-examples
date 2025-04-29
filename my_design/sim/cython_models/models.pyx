@@ -16,32 +16,29 @@ cdef extern from "stdint.h":
     ctypedef unsigned int uint32_t
     ctypedef bint bool
 
-# External C++ declarations for cxxrtl templates
+# External C++ declarations for cxxrtl wrapper classes
 cdef extern from "cxxrtl_wrap.h" namespace "cxxrtl":
-    # Define the cxxrtl::value template in a Cython-compatible way
-    cdef cppclass value1 "cxxrtl::value<1>":
-        # Methods of the value template class
-        value1() except +
+    # Define the wrapper classes in a Cython-compatible way
+    cdef cppclass value1_wrap:
+        value1_wrap() except +
         bint bit(int n) except +
-        uint32_t get() except +
-        uint32_t set(uint32_t i) except +
+        uint32_t get_uint32() except +
+        void set_uint32(uint32_t i) except +
 
-    cdef cppclass value4 "cxxrtl::value<4>":
-        # Methods of the value template class
-        value4() except +
+    cdef cppclass value4_wrap:
+        value4_wrap() except +
         bint bit(int n) except +
+        uint32_t get_uint32() except +
+        void set_uint32(uint32_t i) except +
+        
+    cdef cppclass value8_wrap:
+        value8_wrap() except +
         bint bit(int n) except +
-        uint32_t get() except +
-        uint32_t set(uint32_t i) except +
-    cdef cppclass value8 "cxxrtl::value<8>":
-        # Methods of the value template class
-        value8() except +
-        bint bit(int n) except +
-        uint32_t get() except +
-        uint32_t set(uint32_t i) except +
+        uint32_t get_uint32() except +
+        void set_uint32(uint32_t i) except +
 
 cdef class PyValue1:
-    cdef value1* c_value
+    cdef value1_wrap* c_value
     
     def __cinit__(self):
         self.c_value = NULL
@@ -54,15 +51,15 @@ cdef class PyValue1:
     def get(self):
         if self.c_value is NULL:
             raise ValueError("PyValue1 not initialized with a C++ value")
-        return self.c_value.get()
+        return self.c_value.get_uint32()
         
     def set(self, uint32_t value):
         if self.c_value is NULL:
             raise ValueError("PyValue1 not initialized with a C++ value")
-        self.c_value.set(value)
+        self.c_value.set_uint32(value)
 
 cdef class PyValue4:
-    cdef value4* c_value
+    cdef value4_wrap* c_value
     
     def __cinit__(self):
         self.c_value = NULL
@@ -75,15 +72,15 @@ cdef class PyValue4:
     def get(self):
         if self.c_value is NULL:
             raise ValueError("PyValue4 not initialized with a C++ value")
-        return self.c_value.get()
+        return self.c_value.get_uint32()
         
     def set(self, uint32_t value):
         if self.c_value is NULL:
             raise ValueError("PyValue4 not initialized with a C++ value")
-        self.c_value.set(value)
+        self.c_value.set_uint32(value)
 
 cdef class PyValue8:
-    cdef value8* c_value
+    cdef value8_wrap* c_value
     
     def __cinit__(self):
         self.c_value = NULL
@@ -96,12 +93,12 @@ cdef class PyValue8:
     def get(self):
         if self.c_value is NULL:
             raise ValueError("PyValue8 not initialized with a C++ value")
-        return self.c_value.get()
+        return self.c_value.get_uint32()
         
     def set(self, uint32_t value):
         if self.c_value is NULL:
             raise ValueError("PyValue8 not initialized with a C++ value")
-        self.c_value.set(value)
+        self.c_value.set_uint32(value)
 
 
 # Import cxxrtl_design namespace

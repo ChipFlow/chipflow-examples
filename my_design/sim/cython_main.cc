@@ -68,12 +68,19 @@ int main(int argc, char **argv) {
     PyObject* py_flash_d_oe = PyObject_CallObject(py_value4_class, NULL);
     PyObject* py_flash_d_i = PyObject_CallObject(py_value4_class, NULL);
     
+    // Create wrapper objects - we need to use static_cast to convert to the wrapper types
+    auto* flash_clk_wrap = static_cast<cxxrtl::value1_wrap*>(&top.p_flash____clk____o);
+    auto* flash_csn_wrap = static_cast<cxxrtl::value1_wrap*>(&top.p_flash____csn____o);
+    auto* flash_d_o_wrap = static_cast<cxxrtl::value4_wrap*>(&top.p_flash____d____o);
+    auto* flash_d_oe_wrap = static_cast<cxxrtl::value4_wrap*>(&top.p_flash____d____oe);
+    auto* flash_d_i_wrap = static_cast<cxxrtl::value4_wrap*>(&top.p_flash____d____i);
+    
     // Set the C++ value pointers inside the PyValue objects
-    PyObject_SetAttrString(py_flash_clk, "c_value", PyCapsule_New(&top.p_flash____clk____o, "cxxrtl_value", NULL));
-    PyObject_SetAttrString(py_flash_csn, "c_value", PyCapsule_New(&top.p_flash____csn____o, "cxxrtl_value", NULL));
-    PyObject_SetAttrString(py_flash_d_o, "c_value", PyCapsule_New(&top.p_flash____d____o, "cxxrtl_value", NULL));
-    PyObject_SetAttrString(py_flash_d_oe, "c_value", PyCapsule_New(&top.p_flash____d____oe, "cxxrtl_value", NULL));
-    PyObject_SetAttrString(py_flash_d_i, "c_value", PyCapsule_New(&top.p_flash____d____i, "cxxrtl_value", NULL));
+    PyObject_SetAttrString(py_flash_clk, "c_value", PyCapsule_New(flash_clk_wrap, "cxxrtl_value_wrap", NULL));
+    PyObject_SetAttrString(py_flash_csn, "c_value", PyCapsule_New(flash_csn_wrap, "cxxrtl_value_wrap", NULL));
+    PyObject_SetAttrString(py_flash_d_o, "c_value", PyCapsule_New(flash_d_o_wrap, "cxxrtl_value_wrap", NULL));
+    PyObject_SetAttrString(py_flash_d_oe, "c_value", PyCapsule_New(flash_d_oe_wrap, "cxxrtl_value_wrap", NULL));
+    PyObject_SetAttrString(py_flash_d_i, "c_value", PyCapsule_New(flash_d_i_wrap, "cxxrtl_value_wrap", NULL));
     
     // SPI Flash
     PyTuple_SetItem(py_args, 0, PyUnicode_FromString("flash"));
@@ -93,9 +100,13 @@ int main(int argc, char **argv) {
     PyObject* py_uart0_tx = PyObject_CallObject(py_value1_class, NULL);
     PyObject* py_uart0_rx = PyObject_CallObject(py_value1_class, NULL);
     
+    // Create wrapper objects
+    auto* uart0_tx_wrap = static_cast<cxxrtl::value1_wrap*>(&top.p_uart__0____tx____o);
+    auto* uart0_rx_wrap = static_cast<cxxrtl::value1_wrap*>(&top.p_uart__0____rx____i);
+    
     // Set the C++ value pointers
-    PyObject_SetAttrString(py_uart0_tx, "c_value", PyCapsule_New(&top.p_uart__0____tx____o, "cxxrtl_value", NULL));
-    PyObject_SetAttrString(py_uart0_rx, "c_value", PyCapsule_New(&top.p_uart__0____rx____i, "cxxrtl_value", NULL));
+    PyObject_SetAttrString(py_uart0_tx, "c_value", PyCapsule_New(uart0_tx_wrap, "cxxrtl_value_wrap", NULL));
+    PyObject_SetAttrString(py_uart0_rx, "c_value", PyCapsule_New(uart0_rx_wrap, "cxxrtl_value_wrap", NULL));
     
     PyTuple_SetItem(py_args, 0, PyUnicode_FromString("uart_0"));
     PyTuple_SetItem(py_args, 1, py_uart0_tx);
@@ -110,9 +121,13 @@ int main(int argc, char **argv) {
     PyObject* py_uart1_tx = PyObject_CallObject(py_value1_class, NULL);
     PyObject* py_uart1_rx = PyObject_CallObject(py_value1_class, NULL);
     
+    // Create wrapper objects
+    auto* uart1_tx_wrap = static_cast<cxxrtl::value1_wrap*>(&top.p_uart__1____tx____o);
+    auto* uart1_rx_wrap = static_cast<cxxrtl::value1_wrap*>(&top.p_uart__1____rx____i);
+    
     // Set the C++ value pointers
-    PyObject_SetAttrString(py_uart1_tx, "c_value", PyCapsule_New(&top.p_uart__1____tx____o, "cxxrtl_value", NULL));
-    PyObject_SetAttrString(py_uart1_rx, "c_value", PyCapsule_New(&top.p_uart__1____rx____i, "cxxrtl_value", NULL));
+    PyObject_SetAttrString(py_uart1_tx, "c_value", PyCapsule_New(uart1_tx_wrap, "cxxrtl_value_wrap", NULL));
+    PyObject_SetAttrString(py_uart1_rx, "c_value", PyCapsule_New(uart1_rx_wrap, "cxxrtl_value_wrap", NULL));
     
     PyTuple_SetItem(py_args, 0, PyUnicode_FromString("uart_1"));
     PyTuple_SetItem(py_args, 1, py_uart1_tx);
@@ -129,10 +144,15 @@ int main(int argc, char **argv) {
     PyObject* py_gpio0_oe = PyObject_CallObject(py_value8_class, NULL);
     PyObject* py_gpio0_i = PyObject_CallObject(py_value8_class, NULL);
     
+    // Create wrapper objects
+    auto* gpio0_o_wrap = static_cast<cxxrtl::value8_wrap*>(&top.p_gpio__0____gpio____o);
+    auto* gpio0_oe_wrap = static_cast<cxxrtl::value8_wrap*>(&top.p_gpio__0____gpio____oe);
+    auto* gpio0_i_wrap = static_cast<cxxrtl::value8_wrap*>(&top.p_gpio__0____gpio____i);
+    
     // Set the C++ value pointers
-    PyObject_SetAttrString(py_gpio0_o, "c_value", PyCapsule_New(&top.p_gpio__0____gpio____o, "cxxrtl_value", NULL));
-    PyObject_SetAttrString(py_gpio0_oe, "c_value", PyCapsule_New(&top.p_gpio__0____gpio____oe, "cxxrtl_value", NULL));
-    PyObject_SetAttrString(py_gpio0_i, "c_value", PyCapsule_New(&top.p_gpio__0____gpio____i, "cxxrtl_value", NULL));
+    PyObject_SetAttrString(py_gpio0_o, "c_value", PyCapsule_New(gpio0_o_wrap, "cxxrtl_value_wrap", NULL));
+    PyObject_SetAttrString(py_gpio0_oe, "c_value", PyCapsule_New(gpio0_oe_wrap, "cxxrtl_value_wrap", NULL));
+    PyObject_SetAttrString(py_gpio0_i, "c_value", PyCapsule_New(gpio0_i_wrap, "cxxrtl_value_wrap", NULL));
     
     PyTuple_SetItem(py_args, 0, PyUnicode_FromString("gpio_0"));
     PyTuple_SetItem(py_args, 1, py_gpio0_o);
@@ -149,10 +169,15 @@ int main(int argc, char **argv) {
     PyObject* py_gpio1_oe = PyObject_CallObject(py_value8_class, NULL);
     PyObject* py_gpio1_i = PyObject_CallObject(py_value8_class, NULL);
     
+    // Create wrapper objects
+    auto* gpio1_o_wrap = static_cast<cxxrtl::value8_wrap*>(&top.p_gpio__1____gpio____o);
+    auto* gpio1_oe_wrap = static_cast<cxxrtl::value8_wrap*>(&top.p_gpio__1____gpio____oe);
+    auto* gpio1_i_wrap = static_cast<cxxrtl::value8_wrap*>(&top.p_gpio__1____gpio____i);
+    
     // Set the C++ value pointers
-    PyObject_SetAttrString(py_gpio1_o, "c_value", PyCapsule_New(&top.p_gpio__1____gpio____o, "cxxrtl_value", NULL));
-    PyObject_SetAttrString(py_gpio1_oe, "c_value", PyCapsule_New(&top.p_gpio__1____gpio____oe, "cxxrtl_value", NULL));
-    PyObject_SetAttrString(py_gpio1_i, "c_value", PyCapsule_New(&top.p_gpio__1____gpio____i, "cxxrtl_value", NULL));
+    PyObject_SetAttrString(py_gpio1_o, "c_value", PyCapsule_New(gpio1_o_wrap, "cxxrtl_value_wrap", NULL));
+    PyObject_SetAttrString(py_gpio1_oe, "c_value", PyCapsule_New(gpio1_oe_wrap, "cxxrtl_value_wrap", NULL));
+    PyObject_SetAttrString(py_gpio1_i, "c_value", PyCapsule_New(gpio1_i_wrap, "cxxrtl_value_wrap", NULL));
     
     PyTuple_SetItem(py_args, 0, PyUnicode_FromString("gpio_1"));
     PyTuple_SetItem(py_args, 1, py_gpio1_o);
@@ -171,11 +196,17 @@ int main(int argc, char **argv) {
     PyObject* py_spi0_copi = PyObject_CallObject(py_value1_class, NULL);
     PyObject* py_spi0_cipo = PyObject_CallObject(py_value1_class, NULL);
     
+    // Create wrapper objects
+    auto* spi0_clk_wrap = static_cast<cxxrtl::value1_wrap*>(&top.p_user__spi__0____sck____o);
+    auto* spi0_csn_wrap = static_cast<cxxrtl::value1_wrap*>(&top.p_user__spi__0____csn____o);
+    auto* spi0_copi_wrap = static_cast<cxxrtl::value1_wrap*>(&top.p_user__spi__0____copi____o);
+    auto* spi0_cipo_wrap = static_cast<cxxrtl::value1_wrap*>(&top.p_user__spi__0____cipo____i);
+    
     // Set the C++ value pointers
-    PyObject_SetAttrString(py_spi0_clk, "c_value", PyCapsule_New(&top.p_user__spi__0____sck____o, "cxxrtl_value", NULL));
-    PyObject_SetAttrString(py_spi0_csn, "c_value", PyCapsule_New(&top.p_user__spi__0____csn____o, "cxxrtl_value", NULL));
-    PyObject_SetAttrString(py_spi0_copi, "c_value", PyCapsule_New(&top.p_user__spi__0____copi____o, "cxxrtl_value", NULL));
-    PyObject_SetAttrString(py_spi0_cipo, "c_value", PyCapsule_New(&top.p_user__spi__0____cipo____i, "cxxrtl_value", NULL));
+    PyObject_SetAttrString(py_spi0_clk, "c_value", PyCapsule_New(spi0_clk_wrap, "cxxrtl_value_wrap", NULL));
+    PyObject_SetAttrString(py_spi0_csn, "c_value", PyCapsule_New(spi0_csn_wrap, "cxxrtl_value_wrap", NULL));
+    PyObject_SetAttrString(py_spi0_copi, "c_value", PyCapsule_New(spi0_copi_wrap, "cxxrtl_value_wrap", NULL));
+    PyObject_SetAttrString(py_spi0_cipo, "c_value", PyCapsule_New(spi0_cipo_wrap, "cxxrtl_value_wrap", NULL));
     
     PyTuple_SetItem(py_args, 0, PyUnicode_FromString("spi_0"));
     PyTuple_SetItem(py_args, 1, py_spi0_clk);

@@ -13,6 +13,7 @@ export = "my_design.steps.export_verilog:ExportVerilogStep"
 
 [sim]
 use_cython = true
+use_cxxrtl_capi = false
 
 [chipflow.clocks]
 default = 'sys_clk'
