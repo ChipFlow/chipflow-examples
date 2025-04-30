@@ -41,6 +41,7 @@ test = [
 [tool.pdm.scripts]
 _.env_file = ".env.toolchain"
 test.cmd = "pytest"
+json-compare.call = "tools.json_compare:main"
 
 [tool.pdm.resolution]
 allow-prereleases = true
