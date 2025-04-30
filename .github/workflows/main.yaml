@@ -45,7 +45,7 @@ jobs:
         env:
           CHIPFLOW_API_ORIGIN: 'https://build-staging.chipflow.org'
           CHIPFLOW_API_KEY_ID: ${{ secrets.CHIPFLOW_API_KEY_ID }}
-          CHIPFLOW_API_KEY_SECRET: ${{ secrets.CHIPFLOW_API_KEY_SECRET }}k
+          CHIPFLOW_API_KEY_SECRET: ${{ secrets.CHIPFLOW_API_KEY_SECRET }}
 
   test:
     runs-on: ubuntu-latest
