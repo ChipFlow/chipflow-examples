@@ -1,5 +1,6 @@
 {
 "events": [
+{ "timestamp": 0, "peripheral": "gpio_0", "event": "change", "payload": "ZZZZZZZZ" },
 { "timestamp": 53638, "peripheral": "uart_0", "event": "tx", "payload": 240 },
 { "timestamp": 74102, "peripheral": "uart_0", "event": "tx", "payload": 159 },
 { "timestamp": 94566, "peripheral": "uart_0", "event": "tx", "payload": 144 },
