@@ -5,7 +5,7 @@ from amaranth.lib import wiring
 from amaranth.lib.wiring import In, Out, flipped, connect
 from amaranth_soc import csr
 
-from chipflow_lib.platforms import OutputPinSignature
+from chipflow_lib.platforms import OutputIOSignature
 
 __all__ = ["PDMPeripheral"]
 
@@ -19,7 +19,7 @@ class PDMPeripheral(wiring.Component):
         """Configuration register """
         en: csr.Field(csr.action.RW, unsigned(1))
 
-    WiringSignature = OutputPinSignature(1)
+    WiringSignature = OutputIOSignature(1)
 
     def __init__(self, *, bitwidth):
         self._bitwidth = bitwidth
