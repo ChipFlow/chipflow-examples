@@ -8,6 +8,7 @@
 # ///
 import os
 import subprocess
+import sys
 import urllib
 from pathlib import Path
 
@@ -24,10 +25,15 @@ def get_branch(repo_dir):
 def get_remote_branch(repo, branch):
     return subprocess.call(
         ['git', 'ls-remote', '--exit-code', '--heads', repo, f'refs/heads/{branch}'],
-        ) == 0
+        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) == 0
 
 def gen_overrides():
-    branch = get_branch(rootdir)
+    if len(sys.argv) > 1:
+        branch = sys.argv[1]
+        if branch.startswith("refs/heads/"):
+            branch = branch[11:]
+    else:
+        branch = get_branch(rootdir)
     prj = PyProject.load(rootdir / "pyproject.toml")
     reqs = prj.project['dependencies']
     git_reqs = [r for r in reqs if r.url and r.url.startswith('git+')]
@@ -42,4 +48,6 @@ def gen_overrides():
             path = parts.path
         r.url = urllib.parse.urlunparse(parts._replace(path=path))
         print(str(r))
-gen_overrides()
+
+if __name__ == "__main__":
+    gen_overrides()
