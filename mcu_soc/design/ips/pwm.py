@@ -7,7 +7,7 @@ from amaranth.lib.wiring import In, Out, flipped, connect
 from amaranth.lib.cdc import FFSynchronizer
 from amaranth_soc import csr
 
-from chipflow_lib.platforms import OutputPinSignature, InputPinSignature
+from chipflow_lib.platforms import OutputIOSignature, InputIOSignature
 
 __all__ = ["PWMPeripheral", "PWMPins"]
 
@@ -16,9 +16,9 @@ class PWMPins(wiring.PureInterface):
     class Signature(wiring.Signature):
         def __init__(self):
             super().__init__({
-                "pwm":  Out(OutputPinSignature(1)),
-                "dir":  Out(OutputPinSignature(1)),
-                "stop":  In(InputPinSignature(1)),
+                "pwm":  Out(OutputIOSignature(1)),
+                "dir":  Out(OutputIOSignature(1)),
+                "stop":  In(InputIOSignature(1)),
             })
 
         def create(self, *, path=(), src_loc_at=0):
