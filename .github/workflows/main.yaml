@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - '*'
+      - 'main'
   pull_request:
   merge_group:
 
@@ -28,12 +28,22 @@ jobs:
           cache-dependency-path: pyproject.toml
           cache: true
 
+      - name: Generate overrides to use current branch if PR
+        if: github.event_name == 'pull_request' || github.event_name == 'merge_group'
+        run: |
+          pdm run tools/gen_overrides.py > overrides.txt
+
       - name: Relock PDM
+        if: github.event_name != 'pull_request' && github.event_name != 'merge_group'
         run: pdm lock -d
+
+      - name: Relock PDM (PR)
+        if: github.event_name == 'pull_request' || github.event_name == 'merge_group'
+        run: pdm lock -d --overrides overrides.txt
 
       - name: Install dependencies
         run: |
-          pdm install -d
+          pdm install
 
       - name: Lock pins
         working-directory: ./${{ matrix.design }}
@@ -61,13 +71,22 @@ jobs:
           cache-dependency-path: pyproject.toml
           cache: true
 
-      - name: Relock PDM
+      - name: Generate overrides to use current branch if PR
+        if: github.event_name == 'pull_request' || github.event_name == 'merge_group'
         run: |
-          pdm lock -d
+          pdm run tools/gen_overrides.py > overrides.txt
+
+      - name: Relock PDM
+        if: github.event_name != 'pull_request' && github.event_name != 'merge_group'
+        run: pdm lock -d
+
+      - name: Relock PDM (PR)
+        if: github.event_name == 'pull_request' || github.event_name == 'merge_group'
+        run: pdm lock -d --overrides overrides.txt
 
       - name: Install dependencies
         run: |
-          pdm install -d
+          pdm install
 
       - name: Cache YoWASP build products
         uses: actions/cache@v4
