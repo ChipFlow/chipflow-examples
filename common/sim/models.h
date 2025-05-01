@@ -90,12 +90,13 @@ struct gpio_model {
     void step(unsigned timestamp);
 
 private:
-    uint32_t input_data;
+    uint32_t input_data = 0;
     const value<width> &o;
     const value<width> &oe;
     value<width> &i;
     struct {
-        uint32_t o_last, oe_last;
+        uint32_t o_last = 0;
+        uint32_t oe_last = 0;
     } s;
 };
 
