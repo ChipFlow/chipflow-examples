@@ -17,18 +17,18 @@ from amaranth_orchard.io import SPISignature, SPIPeripheral
 from amaranth_orchard.io import I2CSignature, I2CPeripheral
 
 from amaranth_cv32e40p.cv32e40p import CV32E40P, DebugModule
-from chipflow_lib.platforms import InputPinSignature, OutputPinSignature
+from chipflow_lib.platforms import InputIOSignature, OutputIOSignature
 from .ips.pwm import PWMPins, PWMPeripheral
 # from .ips.pdm import PDMPeripheral
 
 __all__ = ["JTAGSignature", "MySoC"]
 
 JTAGSignature = wiring.Signature({
-    "trst": Out(InputPinSignature(1)),
-    "tck": Out(InputPinSignature(1)),
-    "tms": Out(InputPinSignature(1)),
-    "tdi": Out(InputPinSignature(1)),
-    "tdo": Out(OutputPinSignature(1)),
+    "trst": Out(InputIOSignature(1)),
+    "tck": Out(InputIOSignature(1)),
+    "tms": Out(InputIOSignature(1)),
+    "tdi": Out(InputIOSignature(1)),
+    "tdo": Out(OutputIOSignature(1)),
 })
 
 
