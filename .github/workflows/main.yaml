@@ -1,11 +1,22 @@
 on:
   push:
     branches:
-      - '*'
+      - 'main'
+      - 'latest-release'
   pull_request:
   merge_group:
+  workflow_dispatch:
+    inputs:
+      release:
+        description: Test with the release lock
+        type: boolean
+        default: false
+
+env:
+  lock_pdm: ${{ ! (github.ref_name == 'refs/heads/latest-release' || inputs.release) }}
 
 name: CI
+run-name: ${{ inputs.release && 'Release' || 'CI'}}
 jobs:
 
   submit:
@@ -29,6 +40,7 @@ jobs:
           cache: true
 
       - name: Relock PDM
+        if: env.lock_pdm
         run: pdm lock -d
 
       - name: Install dependencies
@@ -62,6 +74,7 @@ jobs:
           cache: true
 
       - name: Relock PDM
+        if: env.lock_pdm
         run: |
           pdm lock -d
 
