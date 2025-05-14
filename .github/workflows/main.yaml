@@ -39,13 +39,8 @@ jobs:
           cache-dependency-path: pyproject.toml
           cache: true
 
-      - name: Relock PDM
-        if: env.lock_pdm
-        run: pdm lock -d
-
-      - name: Install dependencies
-        run: |
-          pdm install -d
+      - name: Install dependencies with multirepo
+        uses: chipflow/pdm-multirepo@v1
 
       - name: Lock pins
         working-directory: ./${{ matrix.design }}
@@ -73,14 +68,8 @@ jobs:
           cache-dependency-path: pyproject.toml
           cache: true
 
-      - name: Relock PDM
-        if: env.lock_pdm
-        run: |
-          pdm lock -d
-
-      - name: Install dependencies
-        run: |
-          pdm install -d
+      - name: Install dependencies with multirepo
+        uses: chipflow/pdm-multirepo@v1
 
       - name: Cache YoWASP build products
         uses: actions/cache@v4
