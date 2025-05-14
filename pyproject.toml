@@ -56,7 +56,7 @@ _.env_file = ".env.toolchain"
 _json-compare.call = "tools.json_compare:main"
 _check-project.call = "tools.check_project:main"
 _run-sim.shell = "cd $PDM_RUN_CWD/build/sim && ./sim_soc"
-submit.composite = ["check-project", "chipflow silicon submit {args}"]
+submit.composite = ["_check-project", "chipflow silicon submit {args}"]
 chipflow.shell = "cd $PDM_RUN_CWD && chipflow"
 sim-run.composite = [
     "_check-project",
@@ -69,8 +69,8 @@ sim-check.composite = [
     "sim-run {args}",
     "_json-compare design/tests/events_reference.json build/sim/events.json"
     ]
-board-load-software-ulx3s.composite = ["check_project", "openFPGALoader -fb ulx3s -o 0x00100000 $PDM_RUN_CWD/build/software/software.bin"]
-board-load-ulx3s.composite = ["check_project", "openFPGALoader -b ulx3s $PDM_RUN_CWD/build/top.bit"]
+board-load-software-ulx3s.composite = ["_check_project", "openFPGALoader -fb ulx3s -o 0x00100000 $PDM_RUN_CWD/build/software/software.bin"]
+board-load-ulx3s.composite = ["_check_project", "openFPGALoader -b ulx3s $PDM_RUN_CWD/build/top.bit"]
 test.cmd = "pytest"
 test-cov.cmd = "pytest --cov=my_design cov-report=term"
 test-cov-html.cmd = "pytest --cov=my_design --cov-report=html"

@@ -19,6 +19,7 @@ __pycache__/
 /build
 /mcu_soc/build
 /minimal/build
+/picosoc_verilog/build
 
 # testbenches
 *.vcd
