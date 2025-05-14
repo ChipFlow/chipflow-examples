@@ -624,12 +624,14 @@ public:
 
 			CXXRTL_ALWAYS_INLINE
 			void on_update(size_t chunks, const chunk_t *base, const chunk_t *value) {
-				writer->write_change(ident_lookup->at(base), chunks, value);
+				if (ident_lookup->count(base))
+					writer->write_change(ident_lookup->at(base), chunks, value);
 			}
 
 			CXXRTL_ALWAYS_INLINE
 			void on_update(size_t chunks, const chunk_t *base, const chunk_t *value, size_t index) {
-				writer->write_change(ident_lookup->at(base), chunks, value, index);
+				if (ident_lookup->count(base))
+					writer->write_change(ident_lookup->at(base), chunks, value, index);
 			}
 		} record_observer;
 		record_observer.ident_lookup = &ident_lookup;
