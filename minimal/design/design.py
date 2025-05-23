@@ -1,9 +1,8 @@
-from chipflow_lib.platforms.sim import SimPlatform
 from chipflow_lib.software.soft_gen import SoftwareGenerator
 
 from amaranth import Module
 from amaranth.lib import wiring
-from amaranth.lib.wiring import In, Out, flipped, connect
+from amaranth.lib.wiring import Out, flipped, connect
 
 from amaranth_soc import csr, wishbone
 from amaranth_soc.csr.wishbone import WishboneCSRBridge
@@ -13,12 +12,9 @@ from amaranth_orchard.memory import QSPIFlash
 from amaranth_soc.wishbone.sram import WishboneSRAM
 from amaranth_orchard.io import GPIOPeripheral
 from amaranth_orchard.io import UARTPeripheral
-from amaranth_orchard.io import SPISignature, SPIPeripheral
-from amaranth_orchard.io import I2CSignature, I2CPeripheral
 
 from minerva.core import Minerva
 
-from chipflow_lib.platforms import InputPinSignature, OutputPinSignature
 # from .ips.pdm import PDMPeripheral
 
 __all__ = ["MySoC"]
