@@ -28,30 +28,15 @@ dependencies = [
 requires = ["pdm-backend"]
 build-backend = "pdm.backend"
 
-# Development workflow configuration
-
-[tool.pdm.dev-dependencies]
-test = [
-  "pytest>=7.3.1",
-]
-#dev = [
-#    "-e file:///${PROJECT_ROOT}/../chipflow-lib#egg=chipflow-lib"
-#]
-
-[tool.pdm.scripts]
-_.env_file = ".env.toolchain"
-test.cmd = "pytest"
-json-compare.call = "tools.json_compare:main"
-
 [tool.pdm.resolution]
 allow-prereleases = true
 
+# Development workflow configuration
+
 [tool.pyright]
-include = ['my_design/**']
 diagnosticMode=false
 typeCheckingMode = "off"
 reportInvalidTypeForm = false
-reportUnboundVariable = false
 reportAttributeAccessIssue = false
 reportGeneralTypeIssues = false
 reportWildcardImportFromLibrary = false
@@ -61,4 +46,43 @@ reportMissingImports = "none"
 include = ["pyproject.toml", "**/*.py", "chipflow.toml"]
 
 [tool.ruff.lint]
-ignore = ['F403', 'F405']
+ignore = ['F403', 'F405', 'E701', 'F841']
+
+[tool.pdm.version]
+source = "scm"
+
+[tool.pdm.scripts]
+_.env_file = ".env.toolchain"
+_json-compare.call = "tools.json_compare:main"
+_check-project.call = "tools.check_project:main"
+_run-sim.shell = "cd $PDM_RUN_CWD/build/sim && ./sim_soc"
+submit.composite = ["check-project", "chipflow silicon submit {args}"]
+chipflow.shell = "cd $PDM_RUN_CWD && chipflow"
+sim-run.composite = [
+    "_check-project",
+    "chipflow sim",
+    "chipflow software",
+    "_run-sim {args}"
+    ]
+sim-check.composite = [
+    "_check-project",
+    "sim-run {args}",
+    "_json-compare design/tests/events_reference.json build/sim/events.json"
+    ]
+board-load-software-ulx3s.composite = ["check_project", "openFPGALoader -fb ulx3s -o 0x00100000 $PDM_RUN_CWD/build/software/software.bin"]
+board-load-ulx3s.composite = ["check_project", "openFPGALoader -b ulx3s $PDM_RUN_CWD/build/top.bit"]
+test.cmd = "pytest"
+test-cov.cmd = "pytest --cov=my_design cov-report=term"
+test-cov-html.cmd = "pytest --cov=my_design --cov-report=html"
+# test-docs.cmd = "sphinx-build -b doctest docs/ docs/_build"
+lint.cmd = "ruff check"
+# docs.cmd = "sphinx-build docs/ docs/_build/ -W --keep-going"
+
+
+
+[dependency-groups]
+dev = [
+    "ruff>=0.9.2",
+    "pytest>=7.2.0",
+    "pytest-cov>=0.6",
+]
