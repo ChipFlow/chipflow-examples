@@ -91,7 +91,7 @@ jobs:
       - name: Run simulation tests
         working-directory: ./${{ matrix.design }}
         run: |
-          make sim-check
+          pdm sim-check
 
       - name: Test submit dry run
         working-directory: ./${{ matrix.design }}

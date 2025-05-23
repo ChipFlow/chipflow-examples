@@ -3,7 +3,7 @@ from chipflow_lib.software.soft_gen import SoftwareGenerator
 
 from amaranth import Module
 from amaranth.lib import wiring
-from amaranth.lib.wiring import In, Out, flipped, connect
+from amaranth.lib.wiring import Out, flipped, connect
 
 from amaranth_soc import csr, wishbone
 from amaranth_soc.csr.wishbone import WishboneCSRBridge

@@ -1,6 +1,5 @@
 from amaranth import *
-from amaranth import Elaboratable, Module
-from amaranth.build import Platform
+from amaranth import Module
 
 from amaranth.lib import wiring
 from amaranth.lib.wiring import In, Out, flipped, connect

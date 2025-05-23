@@ -44,21 +44,20 @@ First choose a design to test. Here we will use the `minimal` design.
 Change into the `minimal` directory in `chipflow-examples` to use this design. Now we need to 'lock' our pins - the ChipFlow tooling will then automatically allocate inputs and outputs from your design to pins on the chip.
 
 ```
-pdm run chipflow pin lock
+pdm chipflow pin lock
 ```
 
 We can now simulate and test the design by running:
 ```
-make sim-check
+pdm sim-check
 ```
 
 You should see the simulation model being built and run - and a small test firmware running on the simulated System-on-a-Chip (aided by our local friendly cat!)
 
 ```
-pdm run chipflow sim
 -- build_sim_cxxrtl
 -- build_sim
-pdm run chipflow software
+pdm chipflow software
 -- gather_depencencies
 -- build_software_elf
 -- build_software
@@ -74,7 +73,7 @@ Event logs are identical
 Now you are ready to try building this design into a chip! To submit your design to ChipFlow Platform where it will be built into GDS, run:
 
 ```
-pdm run chipflow silicon submit
+pdm submit
 
 ```
 This should return something like:
@@ -88,7 +87,7 @@ Your design will now start building: pictures and logs of the build are availabl
 
 If you would like to get the build logs streamed to your command-line, you can instead call:
 ```
-pdm run chipflow silicon submit --wait
+pdm submit --wait
 ```
 
 
