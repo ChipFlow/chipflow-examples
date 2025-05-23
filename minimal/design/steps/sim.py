@@ -1,8 +1,6 @@
 from chipflow_lib.steps.sim import SimStep
 
 from amaranth import *
-from amaranth.lib import wiring
-from amaranth.lib.wiring import connect, flipped
 from amaranth.back import rtlil
 
 from ..design import MySoC

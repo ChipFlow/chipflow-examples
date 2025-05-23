@@ -4,7 +4,6 @@ from pathlib import Path
 import shutil
 
 from doit import create_after
-from doit.action import CmdAction
 import chipflow_lib.config
 
 
@@ -15,7 +14,7 @@ RISCVCC = f"{sys.executable} -m ziglang cc -target riscv32-freestanding-musl"
 CINCLUDES = f"-I. -I{BUILD_DIR} -I{DESIGN_DIR}/software"
 LINKER_SCR = f"{BUILD_DIR}/generated/sections.lds"
 SOFTWARE_START = f"{BUILD_DIR}/generated/start.S"
-CFLAGS = f"-g -mcpu=baseline_rv32-a-c-d -mabi=ilp32 -Wl,-Bstatic,-T,"
+CFLAGS = "-g -mcpu=baseline_rv32-a-c-d -mabi=ilp32 -Wl,-Bstatic,-T,"
 CFLAGS += f"{LINKER_SCR},--strip-debug -static -ffreestanding -nostdlib {CINCLUDES}"
 
 
