@@ -6,14 +6,20 @@ soc = "design.design:MySoC"
 
 [chipflow.steps]
 sim = "design.steps.sim:MySimStep"
+board = "design.steps.board:MyBoardStep"
 silicon = "chipflow_lib.steps.silicon:SiliconStep"
 software = "design.steps.software:MySoftwareStep"
 
 [chipflow.clocks]
-default = 'sys_clk'
+default = 'clock_1'
 
 [chipflow.resets]
-default = 'sys_rst_n'
+default = 'reset_1'
+
+[chipflow.boards.ULX3S]
+spi_flash = 'soc.flash'
+leds = 'soc.gpio_0'
+uart = 'soc.uart_0'
 
 [chipflow.silicon]
 process = "ihp_sg13g2"
@@ -21,8 +27,8 @@ package = "pga144"
 
 [chipflow.silicon.pads]
 # System
-sys_clk   = { type = "clock", loc = "114" }
-sys_rst_n = { type = "reset", loc = "115" }
+clock_1 = { type = "clock", loc = "114" }
+reset_1 = { type = "reset", loc = "115" }
 
 [chipflow.silicon.power]
 dvss0        = { type = "power",  loc =   "1" }
