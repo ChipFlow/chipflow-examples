@@ -7,11 +7,11 @@ from amaranth.lib.wiring import Out, flipped, connect
 from amaranth_soc import csr, wishbone
 from amaranth_soc.csr.wishbone import WishboneCSRBridge
 
-from amaranth_orchard.base import SoCID
-from amaranth_orchard.memory import QSPIFlash
+from chipflow_digital_ip.base import SoCID
+from chipflow_digital_ip.memory import QSPIFlash
 from amaranth_soc.wishbone.sram import WishboneSRAM
-from amaranth_orchard.io import GPIOPeripheral
-from amaranth_orchard.io import UARTPeripheral
+from chipflow_digital_ip.io import GPIOPeripheral
+from chipflow_digital_ip.io import UARTPeripheral
 
 from minerva.core import Minerva
 
