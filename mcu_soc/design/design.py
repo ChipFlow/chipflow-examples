@@ -8,13 +8,13 @@ from amaranth.lib.wiring import Out, flipped, connect
 from amaranth_soc import csr, wishbone
 from amaranth_soc.csr.wishbone import WishboneCSRBridge
 
-from amaranth_orchard.base import SoCID
-from amaranth_orchard.memory import QSPIFlash
+from chipflow_digital_ip.base import SoCID
+from chipflow_digital_ip.memory import QSPIFlash
 from amaranth_soc.wishbone.sram import WishboneSRAM
-from amaranth_orchard.io import GPIOPeripheral
-from amaranth_orchard.io import UARTPeripheral
-from amaranth_orchard.io import SPISignature, SPIPeripheral
-from amaranth_orchard.io import I2CSignature, I2CPeripheral
+from chipflow_digital_ip.io import GPIOPeripheral
+from chipflow_digital_ip.io import UARTPeripheral
+from chipflow_digital_ip.io import SPISignature, SPIPeripheral
+from chipflow_digital_ip.io import I2CSignature, I2CPeripheral
 
 from amaranth_cv32e40p.cv32e40p import CV32E40P, DebugModule
 from chipflow_lib.platforms import InputIOSignature, OutputIOSignature
