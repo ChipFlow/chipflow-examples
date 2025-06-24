@@ -1,13 +1,72 @@
-from chipflow_lib.steps.sim import SimStep
+import os
+import importlib.resources
+from contextlib import contextmanager
+from pathlib import Path
+from pprint import pformat
+
+from doit.cmd_base import TaskLoader2, loader
+from doit.doit_cmd import DoitMain
+from doit.task import dict_to_task
 
 from amaranth import *
 from amaranth.back import rtlil
+from chipflow_lib.steps.sim import SimStep
+from chipflow_lib import ChipFlowError
 
 from ..design import MySoC
-from ..sim import doit_build
+from ..sim.doit_build import VARIABLES, TASKS, DOIT_CONFIG
 
-import os
-from pathlib import Path
+EXE = ".exe" if os.name == "nt" else ""
+
+@contextmanager
+def common():
+    chipflow_lib = importlib.resources.files('chipflow_lib')
+    common = chipflow_lib.joinpath('common', 'sim')
+    with importlib.resources.as_file(common) as f:
+        yield f
+
+@contextmanager
+def source():
+    sourcedir = importlib.resources.files("mcu_soc")
+    sim_src = sourcedir.joinpath('design','sim')
+    with importlib.resources.as_file(sim_src) as f:
+        yield f
+
+@contextmanager
+def runtime():
+    yowasp = importlib.resources.files("yowasp_yosys")
+    runtime = yowasp.joinpath('share', 'include', 'backends', 'cxxrtl', 'runtime')
+    with importlib.resources.as_file(runtime) as f:
+        yield f
+
+
+class ContextTaskLoader(TaskLoader2):
+    def __init__(self, config, tasks, context):
+        self.config = config
+        self.tasks = tasks
+        self.subs = context
+        super().__init__()
+
+    def load_doit_config(self):
+        return loader.load_doit_config(self.config)
+
+    def load_tasks(self, cmd, pos_args):
+        task_list = []
+        # substitute
+        for task in self.tasks:
+            d = {}
+            for k,v in task.items():
+                match v:
+                    case str():
+                        d[k.format(**self.subs)] = v.format(**self.subs)
+                    case list():
+                        d[k.format(**self.subs)] = [i.format(**self.subs) for i in v]
+                    case _:
+                        raise ChipFlowError("Unexpected task definition")
+            print(f"adding task: {pformat(d)}")
+            task_list.append(dict_to_task(d))
+        return task_list
+
 
 class SimPlatform:
 
@@ -45,8 +104,6 @@ class SimPlatform:
 
 
 class MySimStep(SimStep):
-    doit_build_module = doit_build
-
     def __init__(self, config):
         platform = SimPlatform()
 
@@ -56,4 +113,14 @@ class MySimStep(SimStep):
         my_design = MySoC()
 
         self.platform.build(my_design)
-        self.doit_build()
+        with common() as common_dir, source() as source_dir, runtime() as runtime_dir:
+            context = {
+                "COMMON_DIR": common_dir,
+                "SOURCE_DIR": source_dir,
+                "RUNTIME_DIR": runtime_dir,
+                "EXE": EXE,
+                }
+            for k,v in VARIABLES.items():
+                context[k] = v.format(**context)
+            print(f"substituting:\n{pformat(context)}")
+            DoitMain(ContextTaskLoader(DOIT_CONFIG, TASKS, context)).run(["build_sim"])
