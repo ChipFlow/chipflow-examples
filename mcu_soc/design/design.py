@@ -246,9 +246,6 @@ class MySoC(wiring.Component):
 
         # m.submodules.jtag_provider = platform.providers.JTAGProvider(debug)
 
-        if isinstance(platform, SimPlatform):
-            m.submodules.wb_mon = platform.add_monitor("wb_mon", wb_decoder.bus)
-
         sw.add_periph("soc_id",     "SOC_ID",   self.csr_soc_id_base)
         #sw.add_periph("gpio",       "BTN_GPIO", self.csr_btn_gpio_base)
 
