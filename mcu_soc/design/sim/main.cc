@@ -14,28 +14,28 @@ using namespace cxxrtl_design;
 int main(int argc, char **argv) {
     p_sim__top top;
 
-    spiflash_model flash("flash", top.p_flash____clk____o, top.p_flash____csn____o,
-        top.p_flash____d____o, top.p_flash____d____oe, top.p_flash____d____i);
+    spiflash_model flash("flash", top.p_io_24_flash__clk_24_o, top.p_io_24_flash__csn_24_o,
+        top.p_io_24_flash__d_24_o, top.p_io_24_flash__d_24_oe, top.p_io_24_flash__d_24_i);
 
-    uart_model uart_0("uart_0", top.p_uart__0____tx____o, top.p_uart__0____rx____i);
-    uart_model uart_1("uart_1", top.p_uart__1____tx____o, top.p_uart__1____rx____i);
+    uart_model uart_0("uart_0", top.p_io_24_uart__0__tx_24_o, top.p_io_24_uart__0__rx_24_i);
+    uart_model uart_1("uart_1", top.p_io_24_uart__1__tx_24_o, top.p_io_24_uart__1__rx_24_i);
 
-    gpio_model gpio_0("gpio_0", top.p_gpio__0____gpio____o, top.p_gpio__0____gpio____oe, top.p_gpio__0____gpio____i);
-    gpio_model gpio_1("gpio_1", top.p_gpio__1____gpio____o, top.p_gpio__1____gpio____oe, top.p_gpio__1____gpio____i);
+    gpio_model gpio_0("gpio_0", top.p_io_24_gpio__0__gpio_24_o, top.p_io_24_gpio__0__gpio_24_oe, top.p_io_24_gpio__0__gpio_24_i);
+    gpio_model gpio_1("gpio_1", top.p_io_24_gpio__1__gpio_24_o, top.p_io_24_gpio__1__gpio_24_oe, top.p_io_24_gpio__1__gpio_24_i);
 
-    spi_model spi_0("spi_0", top.p_user__spi__0____sck____o, top.p_user__spi__0____csn____o, top.p_user__spi__0____copi____o, top.p_user__spi__0____cipo____i);
-    spi_model spi_1("spi_1", top.p_user__spi__1____sck____o, top.p_user__spi__1____csn____o, top.p_user__spi__1____copi____o, top.p_user__spi__1____cipo____i);
-    spi_model spi_2("spi_2", top.p_user__spi__2____sck____o, top.p_user__spi__2____csn____o, top.p_user__spi__2____copi____o, top.p_user__spi__2____cipo____i);
+    spi_model spi_0("spi_0", top.p_io_24_user__spi__0__sck_24_o, top.p_io_24_user__spi__0__csn_24_o, top.p_io_24_user__spi__0__copi_24_o, top.p_io_24_user__spi__0__cipo_24_i);
+    spi_model spi_1("spi_1", top.p_io_24_user__spi__1__sck_24_o, top.p_io_24_user__spi__1__csn_24_o, top.p_io_24_user__spi__1__copi_24_o, top.p_io_24_user__spi__1__cipo_24_i);
+    spi_model spi_2("spi_2", top.p_io_24_user__spi__2__sck_24_o, top.p_io_24_user__spi__2__csn_24_o, top.p_io_24_user__spi__2__copi_24_o, top.p_io_24_user__spi__2__cipo_24_i);
 
-    i2c_model i2c_0("i2c_0", top.p_i2c__0____sda____oe, top.p_i2c__0____sda____i, top.p_i2c__0____scl____oe, top.p_i2c__0____scl____i);
-    i2c_model i2c_1("i2c_1", top.p_i2c__1____sda____oe, top.p_i2c__1____sda____i, top.p_i2c__1____scl____oe, top.p_i2c__1____scl____i);
+    i2c_model i2c_0("i2c_0", top.p_io_24_i2c__0__sda_24_oe, top.p_io_24_i2c__0__sda_24_i, top.p_io_24_i2c__0__scl_24_oe, top.p_io_24_i2c__0__scl_24_i);
+    i2c_model i2c_1("i2c_1", top.p_io_24_i2c__1__sda_24_oe, top.p_io_24_i2c__1__sda_24_i, top.p_io_24_i2c__1__scl_24_oe, top.p_io_24_i2c__1__scl_24_i);
 
     cxxrtl::agent agent(cxxrtl::spool("spool.bin"), top);
     if (getenv("DEBUG")) // can also be done when a condition is violated, etc
         std::cerr << "Waiting for debugger on " << agent.start_debugging() << std::endl;
 
-    open_event_log("events.json");
-    open_input_commands("../../design/tests/input.json");
+    open_event_log(BUILD_DIR "/sim/events.json");
+    open_input_commands(PROJECT_ROOT "/design/tests/input.json");
 
     unsigned timestamp = 0;
     auto tick = [&]() {
@@ -55,12 +55,12 @@ int main(int argc, char **argv) {
         i2c_0.step(timestamp);
         i2c_1.step(timestamp);
 
-        top.p_clk.set(false);
+        top.p_io_24_sys__clk_24_i.set(false);
         agent.step();
         agent.advance(1_us);
         ++timestamp;
 
-        top.p_clk.set(true);
+        top.p_io_24_sys__clk_24_i.set(true);
         agent.step();
         agent.advance(1_us);
         ++timestamp;
@@ -69,14 +69,14 @@ int main(int argc, char **argv) {
         //     agent.breakpoint(CXXRTL_LOCATION);
     };
 
-    flash.load_data("../software/software.bin", 0x00100000U);
+    flash.load_data(BUILD_DIR "/software/software.bin", 0x00100000U);
     agent.step();
     agent.advance(1_us);
 
-    top.p_rst.set(true);
+    top.p_io_24_sys__rst__n_24_i.set(false);
     tick();
 
-    top.p_rst.set(false);
+    top.p_io_24_sys__rst__n_24_i.set(true);
     for (int i = 0; i < 3000000; i++)
         tick();
 
