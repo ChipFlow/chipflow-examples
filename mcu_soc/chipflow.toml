@@ -6,8 +6,6 @@ soc = "design.design:MySoC"
 
 [chipflow.steps]
 board = "design.steps.board:MyBoardStep"
-silicon = "chipflow_lib.steps.silicon:SiliconStep"
-sim = "chipflow_lib.steps.sim:SimStep"
 software = "design.steps.software:MySoftwareStep"
 
 [chipflow.clocks]
