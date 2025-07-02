@@ -15,7 +15,6 @@ from amaranth_orchard.io import UARTPeripheral
 
 from minerva.core import Minerva
 
-from chipflow_lib.platforms import InputIOSignature, OutputIOSignature
 # from .ips.pdm import PDMPeripheral
 
 __all__ = ["MySoC"]

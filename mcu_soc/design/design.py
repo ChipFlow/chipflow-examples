@@ -1,4 +1,3 @@
-from chipflow_lib.platforms.sim import SimPlatform
 from chipflow_lib.software.soft_gen import SoftwareGenerator
 
 from amaranth import Module
