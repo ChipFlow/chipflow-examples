@@ -55,12 +55,12 @@ int main(int argc, char **argv) {
         i2c_0.step(timestamp);
         i2c_1.step(timestamp);
 
-        top.p_io_24_sys__clk_24_i.set(false);
+        top.top.p_io_24_sync_2d_clk_24_i.set.set(false);
         agent.step();
         agent.advance(1_us);
         ++timestamp;
 
-        top.p_io_24_sys__clk_24_i.set(true);
+        top.top.p_io_24_sync_2d_clk_24_i.set.set(true);
         agent.step();
         agent.advance(1_us);
         ++timestamp;

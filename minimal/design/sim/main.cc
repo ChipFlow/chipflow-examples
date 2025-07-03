@@ -37,12 +37,12 @@ int main(int argc, char **argv) {
 
         gpio_0.step(timestamp);
 
-        top.p_io_24_sys__clk_24_i.set(false);
+        top.p_io_24_sync_2d_clk_24_i.set(false);
         agent.step();
         agent.advance(1_us);
         ++timestamp;
 
-        top.p_io_24_sys__clk_24_i.set(true);
+        top.p_io_24_sync_2d_clk_24_i.set(true);
         agent.step();
         agent.advance(1_us);
         ++timestamp;
@@ -55,10 +55,10 @@ int main(int argc, char **argv) {
     agent.step();
     agent.advance(1_us);
 
-    top.p_io_24_sys__rst__n_24_i.set(false);
+    top.p_io_24_sync_2d_rst_24_i.set(false);
     tick();
 
-    top.p_io_24_sys__rst__n_24_i.set(true);
+    top.p_io_24_sync_2d_rst_24_i.set(true);
     for (int i = 0; i < 3000000; i++)
         tick();
 
