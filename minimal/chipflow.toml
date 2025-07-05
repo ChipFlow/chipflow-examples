@@ -12,12 +12,15 @@ process = "ihp_sg13g2"
 package = "pga144"
 
 [chipflow.power.domains]
-core_io.voltage = '3.3v'
-core_io.type = 'IO'
-rs485.voltage = '5v'
+core_io = { type = 'IO', voltage = {min='1.7 V', max=2.0}}
+rs485.voltage.min = '3.25V'
+rs485.voltage.max = '3.35v'
+rs485.voltage.typical = '3.3v'
 rs485.type = 'IO'
+gpio.voltage = '3.3v'
 
-[chipflow.power]
-uart0.io = 'rs485'
-
-
+[chipflow.power.map]
+soc.gpio_0 = 'gpio'
+soc.uart_0.default = 'rs485'
+soc.uart_0.tx = 'rs485'
+soc.uart_0.rx.default = 'rs485'
