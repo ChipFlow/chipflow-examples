@@ -14,21 +14,21 @@ using namespace cxxrtl_design;
 int main(int argc, char **argv) {
     p_sim__top top;
 
-    spiflash_model flash("flash", top.p_io_24_flash__clk_24_o, top.p_io_24_flash__csn_24_o,
-        top.p_io_24_flash__d_24_o, top.p_io_24_flash__d_24_oe, top.p_io_24_flash__d_24_i);
+    spiflash_model flash("flash", top.p_io_24_soc__flash__clk_24_o, top.p_io_24_soc__flash__csn_24_o,
+        top.p_io_24_soc__flash__d_24_o, top.p_io_24_soc__flash__d_24_oe, top.p_io_24_soc__flash__d_24_i);
 
-    uart_model uart_0("uart_0", top.p_io_24_uart__0__tx_24_o, top.p_io_24_uart__0__rx_24_i);
-    uart_model uart_1("uart_1", top.p_io_24_uart__1__tx_24_o, top.p_io_24_uart__1__rx_24_i);
+    uart_model uart_0("uart_0", top.p_io_24_soc__uart__0__tx_24_o, top.p_io_24_soc__uart__0__rx_24_i);
+    uart_model uart_1("uart_1", top.p_io_24_soc__uart__1__tx_24_o, top.p_io_24_soc__uart__1__rx_24_i);
 
-    gpio_model gpio_0("gpio_0", top.p_io_24_gpio__0__gpio_24_o, top.p_io_24_gpio__0__gpio_24_oe, top.p_io_24_gpio__0__gpio_24_i);
-    gpio_model gpio_1("gpio_1", top.p_io_24_gpio__1__gpio_24_o, top.p_io_24_gpio__1__gpio_24_oe, top.p_io_24_gpio__1__gpio_24_i);
+    gpio_model gpio_0("gpio_0", top.p_io_24_soc__gpio__0__gpio_24_o, top.p_io_24_soc__gpio__0__gpio_24_oe, top.p_io_24_soc__gpio__0__gpio_24_i);
+    gpio_model gpio_1("gpio_1", top.p_io_24_soc__gpio__1__gpio_24_o, top.p_io_24_soc__gpio__1__gpio_24_oe, top.p_io_24_soc__gpio__1__gpio_24_i);
 
-    spi_model spi_0("spi_0", top.p_io_24_user__spi__0__sck_24_o, top.p_io_24_user__spi__0__csn_24_o, top.p_io_24_user__spi__0__copi_24_o, top.p_io_24_user__spi__0__cipo_24_i);
-    spi_model spi_1("spi_1", top.p_io_24_user__spi__1__sck_24_o, top.p_io_24_user__spi__1__csn_24_o, top.p_io_24_user__spi__1__copi_24_o, top.p_io_24_user__spi__1__cipo_24_i);
-    spi_model spi_2("spi_2", top.p_io_24_user__spi__2__sck_24_o, top.p_io_24_user__spi__2__csn_24_o, top.p_io_24_user__spi__2__copi_24_o, top.p_io_24_user__spi__2__cipo_24_i);
+    spi_model spi_0("spi_0", top.p_io_24_soc__user__spi__0__sck_24_o, top.p_io_24_soc__user__spi__0__csn_24_o, top.p_io_24_soc__user__spi__0__copi_24_o, top.p_io_24_soc__user__spi__0__cipo_24_i);
+    spi_model spi_1("spi_1", top.p_io_24_soc__user__spi__1__sck_24_o, top.p_io_24_soc__user__spi__1__csn_24_o, top.p_io_24_soc__user__spi__1__copi_24_o, top.p_io_24_soc__user__spi__1__cipo_24_i);
+    spi_model spi_2("spi_2", top.p_io_24_soc__user__spi__2__sck_24_o, top.p_io_24_soc__user__spi__2__csn_24_o, top.p_io_24_soc__user__spi__2__copi_24_o, top.p_io_24_soc__user__spi__2__cipo_24_i);
 
-    i2c_model i2c_0("i2c_0", top.p_io_24_i2c__0__sda_24_oe, top.p_io_24_i2c__0__sda_24_i, top.p_io_24_i2c__0__scl_24_oe, top.p_io_24_i2c__0__scl_24_i);
-    i2c_model i2c_1("i2c_1", top.p_io_24_i2c__1__sda_24_oe, top.p_io_24_i2c__1__sda_24_i, top.p_io_24_i2c__1__scl_24_oe, top.p_io_24_i2c__1__scl_24_i);
+    i2c_model i2c_0("i2c_0", top.p_io_24_soc__i2c__0__sda_24_oe, top.p_io_24_soc__i2c__0__sda_24_i, top.p_io_24_soc__i2c__0__scl_24_oe, top.p_io_24_soc__i2c__0__scl_24_i);
+    i2c_model i2c_1("i2c_1", top.p_io_24_soc__i2c__1__sda_24_oe, top.p_io_24_soc__i2c__1__sda_24_i, top.p_io_24_soc__i2c__1__scl_24_oe, top.p_io_24_soc__i2c__1__scl_24_i);
 
     cxxrtl::agent agent(cxxrtl::spool("spool.bin"), top);
     if (getenv("DEBUG")) // can also be done when a condition is violated, etc
@@ -55,12 +55,12 @@ int main(int argc, char **argv) {
         i2c_0.step(timestamp);
         i2c_1.step(timestamp);
 
-        top.p_io_24_sys__clk_24_i.set(false);
+        top.p_io_24_clk_24_i.set(false);
         agent.step();
         agent.advance(1_us);
         ++timestamp;
 
-        top.p_io_24_sys__clk_24_i.set(true);
+        top.p_io_24_clk_24_i.set(true);
         agent.step();
         agent.advance(1_us);
         ++timestamp;
@@ -73,10 +73,10 @@ int main(int argc, char **argv) {
     agent.step();
     agent.advance(1_us);
 
-    top.p_io_24_sys__rst__n_24_i.set(false);
+    top.p_io_24_rst__n_24_i.set(false);
     tick();
 
-    top.p_io_24_sys__rst__n_24_i.set(true);
+    top.p_io_24_rst__n_24_i.set(true);
     for (int i = 0; i < 3000000; i++)
         tick();
 
