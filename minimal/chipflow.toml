@@ -8,12 +8,6 @@ soc = "design.design:MySoC"
 board = "design.steps.board:MyBoardStep"
 software = "design.steps.software:MySoftwareStep"
 
-[chipflow.clocks]
-default = 'sys_clk'
-
-[chipflow.resets]
-default = 'sys_rst_n'
-
 [chipflow.silicon]
 process = "sky130"
 package = "openframe"

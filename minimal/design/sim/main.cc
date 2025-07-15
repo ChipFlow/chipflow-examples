@@ -14,12 +14,12 @@ using namespace cxxrtl_design;
 int main(int argc, char **argv) {
     p_sim__top top;
 
-    spiflash_model flash("flash", top.p_io_24_flash__clk_24_o, top.p_io_24_flash__csn_24_o,
-        top.p_io_24_flash__d_24_o, top.p_io_24_flash__d_24_oe, top.p_io_24_flash__d_24_i);
+    spiflash_model flash("flash", top.p_io_24_soc__flash__clk_24_o, top.p_io_24_soc__flash__csn_24_o,
+        top.p_io_24_soc__flash__d_24_o, top.p_io_24_soc__flash__d_24_oe, top.p_io_24_soc__flash__d_24_i);
 
-    uart_model uart_0("uart_0", top.p_io_24_uart__0__tx_24_o, top.p_io_24_uart__0__rx_24_i);
+    uart_model uart_0("uart_0", top.p_io_24_soc__uart__0__tx_24_o, top.p_io_24_soc__uart__0__rx_24_i);
 
-    gpio_model gpio_0("gpio_0", top.p_io_24_gpio__0__gpio_24_o, top.p_io_24_gpio__0__gpio_24_oe, top.p_io_24_gpio__0__gpio_24_i);
+    gpio_model gpio_0("gpio_0", top.p_io_24_soc__gpio__0__gpio_24_o, top.p_io_24_soc__gpio__0__gpio_24_oe, top.p_io_24_soc__gpio__0__gpio_24_i);
 
     cxxrtl::agent agent(cxxrtl::spool("spool.bin"), top);
     if (getenv("DEBUG")) // can also be done when a condition is violated, etc
@@ -37,12 +37,12 @@ int main(int argc, char **argv) {
 
         gpio_0.step(timestamp);
 
-        top.p_io_24_sync_2d_clk_24_i.set(false);
+        top.p_io_24_clk_24_i.set(false);
         agent.step();
         agent.advance(1_us);
         ++timestamp;
 
-        top.p_io_24_sync_2d_clk_24_i.set(true);
+        top.p_io_24_clk_24_i.set(true);
         agent.step();
         agent.advance(1_us);
         ++timestamp;
@@ -55,10 +55,10 @@ int main(int argc, char **argv) {
     agent.step();
     agent.advance(1_us);
 
-    top.p_io_24_sync_2d_rst__n_24_i.set(false);
+    top.p_io_24_rst__n_24_i.set(false);
     tick();
 
-    top.p_io_24_sync_2d_rst__n_24_i.set(true);
+    top.p_io_24_rst__n_24_i.set(true);
     for (int i = 0; i < 3000000; i++)
         tick();
 
