@@ -48,7 +48,7 @@ jobs:
 
       - name: Submit to cloud backend
         working-directory: ./${{ matrix.design }}
-        run: pdm run chipflow silicon submit --wait
+        run: pdm run chipflow -vv silicon submit --wait
         env:
           CHIPFLOW_API_KEY: ${{ secrets.CHIPFLOW_API_KEY}}
 
