@@ -15,7 +15,7 @@ from chipflow_digital_ip.io import UARTPeripheral
 
 from minerva.core import Minerva
 
-from chipflow_lib.platforms import InputIOSignature, OutputIOSignature, BidirIOSignature, IODriveMode
+from chipflow_lib.platforms import InputIOSignature, OutputIOSignature, BidirIOSignature, Sky130DriveMode
 # from .ips.pdm import PDMPeripheral
 
 __all__ = ["MySoC"]
@@ -29,7 +29,7 @@ class MySoC(wiring.Component):
             "flash": Out(QSPIFlash.Signature()),
             "uart_0": Out(UARTPeripheral.Signature()),
             "gpio_0": Out(GPIOPeripheral.Signature(pin_count=8)),
-            "gpio_open_drain": Out(GPIOPeripheral.Signature(pin_count=4, drive_mode=IODriveMode.OPEN_DRAIN_STRONG_UP))
+            "gpio_open_drain": Out(GPIOPeripheral.Signature(pin_count=4, drive_mode=Sky130DriveMode.OPEN_DRAIN_STRONG_UP))
         })
 
         # Memory regions:
@@ -44,7 +44,6 @@ class MySoC(wiring.Component):
         self.csr_spiflash_base = 0xb0000000
 
         self.csr_gpio_base    = 0xb1000000
-        self.csr_gpio_base    = 0xb1100000
         self.csr_uart_base     = 0xb2000000
         self.csr_soc_id_base   = 0xb4000000
 
@@ -108,7 +107,7 @@ class MySoC(wiring.Component):
 
         m.submodules.gpio_open_drain = gpio_open_drain = GPIOPeripheral(pin_count=4)
         csr_decoder.add(gpio_open_drain.bus, name="gpio_open_drain", addr=self.csr_gpio_base + self.periph_offset - self.csr_base)
-        sw.add_periph("gpio", "GPIO_OPEN_DRAIN", self.csr_gpio_base)
+        sw.add_periph("gpio", "GPIO_OPEN_DRAIN", self.csr_gpio_base + self.periph_offset)
 
         connect(m, flipped(self.gpio_open_drain), gpio_open_drain.pins)
 
