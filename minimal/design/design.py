@@ -29,7 +29,7 @@ class MySoC(wiring.Component):
             "flash": Out(QSPIFlash.Signature()),
             "uart_0": Out(UARTPeripheral.Signature()),
             "gpio_0": Out(GPIOPeripheral.Signature(pin_count=8)),
-            "gpio_open_drain": Out(GPIOPeripheral.Signature(pin_count=4, drive_mode=Sky130DriveMode.OPEN_DRAIN_STRONG_UP))
+            "gpio_open_drain": Out(GPIOPeripheral.Signature(pin_count=4, sky130_drive_mode=Sky130DriveMode.OPEN_DRAIN_STRONG_UP))
         })
 
         # Memory regions:
