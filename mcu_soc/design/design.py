@@ -16,7 +16,7 @@ from chipflow_digital_ip.io import UARTPeripheral
 from chipflow_digital_ip.io import SPISignature, SPIPeripheral
 from chipflow_digital_ip.io import I2CSignature, I2CPeripheral
 
-from amaranth_cv32e40p.cv32e40p import CV32E40P, DebugModule
+from chipflow_digital_ip.processors import CV32E40P, OBIDebugModule
 from chipflow_lib.platforms import InputIOSignature, OutputIOSignature
 from .ips.pwm import PWMPins, PWMPeripheral
 # from .ips.pdm import PDMPeripheral
@@ -126,7 +126,7 @@ class MySoC(wiring.Component):
         m.submodules.cpu = cpu
 
         # Debug
-        debug = DebugModule()
+        debug = OBIDebugModule()
         wb_arbiter.add(debug.initiator)
         wb_decoder.add(debug.target, name="debug", addr=self.debug_base)
         m.d.comb += cpu.debug_req.eq(debug.debug_req)
