@@ -16,6 +16,7 @@ from chipflow_digital_ip.io import UARTPeripheral
 from minerva.core import Minerva
 
 from chipflow_lib.platforms import InputIOSignature, OutputIOSignature, BidirIOSignature, Sky130DriveMode
+from chipflow_lib._signatures import GPIOSignature
 # from .ips.pdm import PDMPeripheral
 
 __all__ = ["MySoC"]
@@ -28,8 +29,8 @@ class MySoC(wiring.Component):
         super().__init__({
             "flash": Out(QSPIFlash.Signature()),
             "uart_0": Out(UARTPeripheral.Signature()),
-            "gpio_0": Out(GPIOPeripheral.Signature(pin_count=8)),
-            "gpio_open_drain": Out(GPIOPeripheral.Signature(pin_count=4, sky130_drive_mode=Sky130DriveMode.OPEN_DRAIN_STRONG_UP))
+            "gpio_0": Out(GPIOSignature(pin_count=8)),
+            "gpio_open_drain": Out(GPIOSignature(pin_count=4, sky130_drive_mode=Sky130DriveMode.OPEN_DRAIN_STRONG_UP))
         })
 
         # Memory regions:
