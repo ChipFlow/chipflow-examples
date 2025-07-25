@@ -6,7 +6,6 @@ soc = "design.design:MySoC"
 
 [chipflow.steps]
 board = "design.steps.board:MyBoardStep"
-software = "design.steps.software:MySoftwareStep"
 
 [chipflow.silicon]
 process = "ihp_sg13g2"

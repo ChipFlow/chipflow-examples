@@ -1,4 +1,4 @@
-from chipflow_lib.software.soft_gen import SoftwareGenerator
+from pathlib import Path
 
 from amaranth import Module
 from amaranth.lib import wiring
@@ -15,7 +15,8 @@ from chipflow_digital_ip.io import UARTPeripheral
 
 from minerva.core import Minerva
 
-from chipflow_lib.platforms import Sky130DriveMode, GPIOSignature, UARTSignature, QSPIFlashSignature, attach_simulation_data
+from chipflow_lib.platforms import Sky130DriveMode, GPIOSignature, UARTSignature, QSPIFlashSignature, attach_data, SoftwareBuild
+
 
 __all__ = ["MySoC"]
 
@@ -64,13 +65,6 @@ class MySoC(wiring.Component):
 
         connect(m, wb_arbiter.bus, wb_decoder.bus)
 
-        # Software
-
-        sw = SoftwareGenerator(rom_start=self.bios_start, rom_size=0x00100000,
-                               # place BIOS data in SRAM
-                               ram_start=self.mem_sram_base, ram_size=self.sram_size)
-
-
         # CPU
 
         cpu = Minerva(reset_address=self.bios_start, with_muldiv=True)
@@ -82,13 +76,11 @@ class MySoC(wiring.Component):
         # QSPI Flash
 
         spiflash = QSPIFlash(addr_width=24, data_width=32)
-        wb_decoder .add(spiflash.wb_bus, addr=self.mem_spiflash_base)
+        wb_decoder .add(spiflash.wb_bus, name="spiflash", addr=self.mem_spiflash_base)
         csr_decoder.add(spiflash.csr_bus, name="spiflash", addr=self.csr_spiflash_base - self.csr_base)
         m.submodules.spiflash = spiflash
 
         connect(m, flipped(self.flash), spiflash.pins)
-
-        sw.add_periph("spiflash",   "SPIFLASH", self.csr_spiflash_base)
 
         # SRAM
 
@@ -98,25 +90,22 @@ class MySoC(wiring.Component):
         m.submodules.sram = sram
 
         # GPIOs
-        m.submodules.gpio0 = gpio0 = GPIOPeripheral(pin_count=8)
-        csr_decoder.add(gpio0.bus, name="gpio_0", addr=self.csr_gpio_base - self.csr_base)
-        sw.add_periph("gpio", "GPIO_0", self.csr_gpio_base)
+        m.submodules.gpio_0 = gpio_0 = GPIOPeripheral(pin_count=8)
+        csr_decoder.add(gpio_0.bus, name="gpio_0", addr=self.csr_gpio_base - self.csr_base)
 
-        connect(m, flipped(self.gpio_0), gpio0.pins)
+        connect(m, flipped(self.gpio_0), gpio_0.pins)
 
         m.submodules.gpio_open_drain = gpio_open_drain = GPIOPeripheral(pin_count=4)
         csr_decoder.add(gpio_open_drain.bus, name="gpio_open_drain", addr=self.csr_gpio_base + self.periph_offset - self.csr_base)
-        sw.add_periph("gpio", "GPIO_OPEN_DRAIN", self.csr_gpio_base + self.periph_offset)
 
         connect(m, flipped(self.gpio_open_drain), gpio_open_drain.pins)
 
 
         # UART
-        m.submodules.uart = uart = UARTPeripheral(init_divisor=int(25e6//115200), addr_width=5)
-        csr_decoder.add(uart.bus, name="uart_0", addr=self.csr_uart_base - self.csr_base)
-        sw.add_periph("uart", "UART_0", self.csr_uart_base)
+        m.submodules.uart_0 = uart_0 = UARTPeripheral(init_divisor=int(25e6//115200), addr_width=5)
+        csr_decoder.add(uart_0.bus, name="uart_0", addr=self.csr_uart_base - self.csr_base)
 
-        connect(m, flipped(self.uart_0), uart.pins)
+        connect(m, flipped(self.uart_0), uart_0.pins)
 
         # SoC ID
 
@@ -132,10 +121,11 @@ class MySoC(wiring.Component):
 
         m.submodules.wb_to_csr = wb_to_csr
 
-        sw.add_periph("soc_id",     "SOC_ID",   self.csr_soc_id_base)
+        sw = SoftwareBuild(sources=Path('design/software').glob('*.c'),
+                           offset=self.bios_start)
 
-        sw.generate("build/software/generated")
-        attach_simulation_data(self.flash, file_name="build/software/software.bin", offset=self.bios_start)
+        # you need to attach data to both the internal and external interfaces
+        attach_data(self.flash, m.submodules.spiflash, sw)
         return m
 
 
