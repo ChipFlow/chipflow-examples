@@ -5,7 +5,8 @@ from amaranth.lib import wiring
 from amaranth.lib.wiring import In, Out, flipped, connect
 from amaranth_soc import csr
 
-from chipflow_lib.platforms import OutputIOSignature
+from chipflow_lib.platforms import OutputIOSignature, SoftwareDriverSignature
+
 
 __all__ = ["PDMPeripheral"]
 
@@ -34,10 +35,16 @@ class PDMPeripheral(wiring.Component):
 
         self._bridge = csr.Bridge(regs.as_memory_map())
 
-        super().__init__({
-            "bus": In(csr.Signature(addr_width=addr_width, data_width=data_width)),
-            "pdm": Out(self.WiringSignature)
-            })
+        super().__init__(
+            SoftwareDriverSignature(
+                members={
+                    "bus": In(csr.Signature(addr_width=addr_width, data_width=data_width)),
+                    "pdm": Out(self.WiringSignature)
+                },
+                component=self,
+                regs_struct='pdm_regs_t',
+                h_files=['drivers/pdm.h'])
+            )
 
         self.bus.memory_map = self._bridge.bus.memory_map
 
@@ -48,7 +55,7 @@ class PDMPeripheral(wiring.Component):
     def elaborate(self, platform):
         m = Module()
         m.submodules.bridge = self._bridge
-        maxval = Const(int((2**self._bitwidth)-1), unsigned(self._bitwidth))        
+        maxval = Const(int((2**self._bitwidth)-1), unsigned(self._bitwidth))
         error = Signal(unsigned(self._bitwidth), init=0x0)
         error_0 = Signal(unsigned(self._bitwidth), init=0x0)
         error_1 = Signal(unsigned(self._bitwidth), init=0x0)

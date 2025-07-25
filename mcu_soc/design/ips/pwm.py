@@ -6,7 +6,7 @@ from amaranth.lib.wiring import In, Out, flipped, connect
 from amaranth.lib.cdc import FFSynchronizer
 from amaranth_soc import csr
 
-from chipflow_lib.platforms import OutputIOSignature, InputIOSignature
+from chipflow_lib.platforms import OutputIOSignature, InputIOSignature, SoftwareDriverSignature
 
 __all__ = ["PWMPeripheral", "PWMPins"]
 
@@ -42,17 +42,17 @@ class PWMPeripheral(wiring.Component):
         """
         en: csr.Field(csr.action.RW, unsigned(1))
         dir: csr.Field(csr.action.RW, unsigned(1))
- 
+
     class Stop_int(csr.Register, access="rw"):
         """Stop_int register
         """
-        stopped: csr.Field(csr.action.RW1C, unsigned(1))   
-            
+        stopped: csr.Field(csr.action.RW1C, unsigned(1))
+
     class Status(csr.Register, access="r"):
         """Status register
         """
-        stop_pin: csr.Field(csr.action.R, unsigned(1))   
-      
+        stop_pin: csr.Field(csr.action.R, unsigned(1))
+
     """pwm peripheral."""
     def __init__(self, *, pins):
         self.pins = pins
@@ -67,17 +67,24 @@ class PWMPeripheral(wiring.Component):
 
         self._bridge = csr.Bridge(regs.as_memory_map())
 
-        super().__init__({
-            "bus": In(csr.Signature(addr_width=regs.addr_width, data_width=regs.data_width)),
-        })
+        super().__init__(
+            SoftwareDriverSignature(
+                members={
+                    "bus": In(csr.Signature(addr_width=regs.addr_width, data_width=regs.data_width)),
+                },
+                component=self,
+                regs_struct='motor_pwm_regs_t',
+                h_files=['drivers/motor_pwm.h'])
+            )
+
         self.bus.memory_map = self._bridge.bus.memory_map
 
     def elaborate(self, platform):
         m = Module()
-        m.submodules.bridge = self._bridge       
+        m.submodules.bridge = self._bridge
         count = Signal(unsigned(16), init=0x0)
         connect(m, flipped(self.bus), self._bridge.bus)
-        
+
         #synchronizer
         stop = Signal()
         m.submodules += FFSynchronizer(i=self.pins.stop.i, o=stop)
@@ -87,12 +94,12 @@ class PWMPeripheral(wiring.Component):
             m.d.sync += count.eq(count+1)
         with m.Else():
             m.d.sync += count.eq(0)
-            
+
         with m.If((self._numr.f.val.data > 0) & (count <= self._numr.f.val.data) & (self._conf.f.en.data == 1) & (self._stop_int.f.stopped.data == 0 )):
             m.d.comb += self.pins.pwm.o.eq(1)
         with m.Else():
             m.d.comb += self.pins.pwm.o.eq(0)
-            
+
         with m.If(count >= self._denom.f.val.data):
             m.d.sync += count.eq(0)
 
