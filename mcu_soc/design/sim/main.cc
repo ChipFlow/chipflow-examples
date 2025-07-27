@@ -23,9 +23,9 @@ int main(int argc, char **argv) {
     gpio_model gpio_0("gpio_0", top.p_io_24_soc__gpio__0__gpio_24_o, top.p_io_24_soc__gpio__0__gpio_24_oe, top.p_io_24_soc__gpio__0__gpio_24_i);
     gpio_model gpio_1("gpio_1", top.p_io_24_soc__gpio__1__gpio_24_o, top.p_io_24_soc__gpio__1__gpio_24_oe, top.p_io_24_soc__gpio__1__gpio_24_i);
 
-    spi_model spi_0("spi_0", top.p_io_24_soc__user__spi__0__sck_24_o, top.p_io_24_soc__user__spi__0__csn_24_o, top.p_io_24_soc__user__spi__0__copi_24_o, top.p_io_24_soc__user__spi__0__cipo_24_i);
-    spi_model spi_1("spi_1", top.p_io_24_soc__user__spi__1__sck_24_o, top.p_io_24_soc__user__spi__1__csn_24_o, top.p_io_24_soc__user__spi__1__copi_24_o, top.p_io_24_soc__user__spi__1__cipo_24_i);
-    spi_model spi_2("spi_2", top.p_io_24_soc__user__spi__2__sck_24_o, top.p_io_24_soc__user__spi__2__csn_24_o, top.p_io_24_soc__user__spi__2__copi_24_o, top.p_io_24_soc__user__spi__2__cipo_24_i);
+    spi_model user_spi_0("user_spi_0", top.p_io_24_soc__user__spi__0__sck_24_o, top.p_io_24_soc__user__spi__0__csn_24_o, top.p_io_24_soc__user__spi__0__copi_24_o, top.p_io_24_soc__user__spi__0__cipo_24_i);
+    spi_model user_spi_1("user_spi_1", top.p_io_24_soc__user__spi__1__sck_24_o, top.p_io_24_soc__user__spi__1__csn_24_o, top.p_io_24_soc__user__spi__1__copi_24_o, top.p_io_24_soc__user__spi__1__cipo_24_i);
+    spi_model user_spi_2("user_spi_2", top.p_io_24_soc__user__spi__2__sck_24_o, top.p_io_24_soc__user__spi__2__csn_24_o, top.p_io_24_soc__user__spi__2__copi_24_o, top.p_io_24_soc__user__spi__2__cipo_24_i);
 
     i2c_model i2c_0("i2c_0", top.p_io_24_soc__i2c__0__sda_24_oe, top.p_io_24_soc__i2c__0__sda_24_i, top.p_io_24_soc__i2c__0__scl_24_oe, top.p_io_24_soc__i2c__0__scl_24_i);
     i2c_model i2c_1("i2c_1", top.p_io_24_soc__i2c__1__sda_24_oe, top.p_io_24_soc__i2c__1__sda_24_i, top.p_io_24_soc__i2c__1__scl_24_oe, top.p_io_24_soc__i2c__1__scl_24_i);
@@ -48,9 +48,9 @@ int main(int argc, char **argv) {
         gpio_0.step(timestamp);
         gpio_1.step(timestamp);
 
-        spi_0.step(timestamp);
-        spi_1.step(timestamp);
-        spi_2.step(timestamp);
+        user_spi_0.step(timestamp);
+        user_spi_1.step(timestamp);
+        user_spi_2.step(timestamp);
 
         i2c_0.step(timestamp);
         i2c_1.step(timestamp);
