@@ -11,34 +11,21 @@ from amaranth_soc.csr.wishbone import WishboneCSRBridge
 from chipflow_digital_ip.base import SoCID
 from chipflow_digital_ip.memory import QSPIFlash
 from amaranth_soc.wishbone.sram import WishboneSRAM
-from chipflow_digital_ip.io import GPIOPeripheral
-from chipflow_digital_ip.io import UARTPeripheral
-from chipflow_digital_ip.io import SPISignature, SPIPeripheral
-from chipflow_digital_ip.io import I2CSignature, I2CPeripheral
-
-from amaranth_cv32e40p.cv32e40p import CV32E40P, DebugModule
-from chipflow_lib.platforms import InputIOSignature, OutputIOSignature
+from chipflow_digital_ip.io import GPIOPeripheral, UARTPeripheral, SPIPeripheral, I2CPeripheral
+from chipflow_digital_ip.processors import CV32E40P, OBIDebugModule
+from chipflow_lib.platforms import GPIOSignature, UARTSignature, SPISignature, I2CSignature, QSPIFlashSignature, JTAGSignature
 from .ips.pwm import PWMPins, PWMPeripheral
 # from .ips.pdm import PDMPeripheral
 
-__all__ = ["JTAGSignature", "MySoC"]
-
-JTAGSignature = wiring.Signature({
-    "trst": Out(InputIOSignature(1)),
-    "tck": Out(InputIOSignature(1)),
-    "tms": Out(InputIOSignature(1)),
-    "tdi": Out(InputIOSignature(1)),
-    "tdo": Out(OutputIOSignature(1)),
-})
-
+__all__ = ["MySoC"]
 
 class MySoC(wiring.Component):
     def __init__(self):
         # Top level interfaces
 
         interfaces = {
-            "flash": Out(QSPIFlash.Signature()),
-            "cpu_jtag": Out(JTAGSignature)
+            "flash": Out(QSPIFlashSignature()),
+            "cpu_jtag": Out(JTAGSignature())
         }
 
         self.user_spi_count = 3
@@ -51,10 +38,10 @@ class MySoC(wiring.Component):
         self.gpio_width = 8
 
         for i in range(self.user_spi_count):
-            interfaces[f"user_spi_{i}"] = Out(SPISignature)
+            interfaces[f"user_spi_{i}"] = Out(SPISignature())
 
         for i in range(self.i2c_count):
-            interfaces[f"i2c_{i}"] = Out(I2CSignature)
+            interfaces[f"i2c_{i}"] = Out(I2CSignature())
 
         for i in range(self.motor_count):
             interfaces[f"motor_pwm{i}"] = Out(PWMPins.Signature())
@@ -63,10 +50,10 @@ class MySoC(wiring.Component):
 #            interfaces[f"pdm_ao_{i}"] = Out(PDMPins.Signature())
 
         for i in range(self.uart_count):
-            interfaces[f"uart_{i}"] = Out(UARTPeripheral.Signature())
+            interfaces[f"uart_{i}"] = Out(UARTSignature())
 
         for i in range(self.gpio_banks):
-            interfaces[f"gpio_{i}"] = Out(GPIOPeripheral.Signature(pin_count=self.gpio_width))
+            interfaces[f"gpio_{i}"] = Out(GPIOSignature(pin_count=self.gpio_width))
 
         super().__init__(interfaces)
 
@@ -126,7 +113,7 @@ class MySoC(wiring.Component):
         m.submodules.cpu = cpu
 
         # Debug
-        debug = DebugModule()
+        debug = OBIDebugModule()
         wb_arbiter.add(debug.initiator)
         wb_decoder.add(debug.target, name="debug", addr=self.debug_base)
         m.d.comb += cpu.debug_req.eq(debug.debug_req)

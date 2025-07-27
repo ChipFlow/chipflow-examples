@@ -14,12 +14,13 @@ using namespace cxxrtl_design;
 int main(int argc, char **argv) {
     p_sim__top top;
 
-    spiflash_model flash("flash", top.p_io_24_soc__flash__clk_24_o, top.p_io_24_soc__flash__csn_24_o,
-        top.p_io_24_soc__flash__d_24_o, top.p_io_24_soc__flash__d_24_oe, top.p_io_24_soc__flash__d_24_i);
+    spiflash_model flash("flash", top.p_io_24_soc__flash__clk_24_o, top.p_io_24_soc__flash__csn_24_o, top.p_io_24_soc__flash__d_24_o, top.p_io_24_soc__flash__d_24_oe, top.p_io_24_soc__flash__d_24_i);
 
     uart_model uart_0("uart_0", top.p_io_24_soc__uart__0__tx_24_o, top.p_io_24_soc__uart__0__rx_24_i);
 
+
     gpio_model gpio_0("gpio_0", top.p_io_24_soc__gpio__0__gpio_24_o, top.p_io_24_soc__gpio__0__gpio_24_oe, top.p_io_24_soc__gpio__0__gpio_24_i);
+
 
     cxxrtl::agent agent(cxxrtl::spool("spool.bin"), top);
     if (getenv("DEBUG")) // can also be done when a condition is violated, etc
