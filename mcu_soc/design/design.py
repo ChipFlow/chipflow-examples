@@ -237,7 +237,7 @@ class MySoC(wiring.Component):
         #sw.add_periph("gpio",       "BTN_GPIO", self.csr_btn_gpio_base)
 
         sw.generate("build/software/generated")
-
+        #spiflash.load("build/software/generated")
         return m
 
 
