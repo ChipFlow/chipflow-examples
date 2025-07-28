@@ -9,14 +9,14 @@
         { "type": "wait", "peripheral": "uart_0", "event": "tx", "payload": 35},
         { "type": "action", "peripheral": "uart_1", "event": "tx", "payload": 42},
 
-        { "type": "action", "peripheral": "spi_0", "event": "set_data", "payload": 99},
+        { "type": "action", "peripheral": "user_spi_0", "event": "set_data", "payload": 99},
 
-        { "type": "wait", "peripheral": "spi_0", "event": "select", "payload": ""},
-        { "type": "wait", "peripheral": "spi_0", "event": "data", "payload": 90 },
-        { "type": "wait", "peripheral": "spi_0", "event": "deselect", "payload": ""},
+        { "type": "wait", "peripheral": "user_spi_0", "event": "select", "payload": ""},
+        { "type": "wait", "peripheral": "user_spi_0", "event": "data", "payload": 90 },
+        { "type": "wait", "peripheral": "user_spi_0", "event": "deselect", "payload": ""},
 
-        { "type": "action", "peripheral": "spi_0", "event": "set_width", "payload": 21},
-        { "type": "action", "peripheral": "spi_0", "event": "set_data", "payload": 773615},
+        { "type": "action", "peripheral": "user_spi_0", "event": "set_width", "payload": 21},
+        { "type": "action", "peripheral": "user_spi_0", "event": "set_data", "payload": 773615},
 
         { "type": "wait", "peripheral": "i2c_0", "event": "start", "payload": "" },
         { "type": "wait", "peripheral": "i2c_0", "event": "address", "payload": 160 },
