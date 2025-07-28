@@ -15,7 +15,7 @@ from chipflow_digital_ip.io import UARTPeripheral
 
 from minerva.core import Minerva
 
-from chipflow_lib.platforms import Sky130DriveMode, GPIOSignature, UARTSignature, QSPIFlashSignature
+from chipflow_lib.platforms import Sky130DriveMode, GPIOSignature, UARTSignature, QSPIFlashSignature, attach_simulation_data
 
 __all__ = ["MySoC"]
 
@@ -135,7 +135,7 @@ class MySoC(wiring.Component):
         sw.add_periph("soc_id",     "SOC_ID",   self.csr_soc_id_base)
 
         sw.generate("build/software/generated")
-
+        attach_simulation_data(self.flash, file_name="build/software/software.bin", offset=self.bios_start)
         return m
 
 
