@@ -1,0 +1,5 @@
+{
+  "name": "ChipFlow Platform",
+  "image": "mcr.microsoft.com/devcontainers/python:1-3.12",
+  "postCreateCommand": "./.devcontainer/postcreate.sh",
+}
