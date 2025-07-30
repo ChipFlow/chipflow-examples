@@ -1,3 +1,5 @@
+from pprint import pformat
+
 from chipflow_lib.platforms.sim import SimPlatform
 from chipflow_lib.software.soft_gen import SoftwareGenerator
 
@@ -135,6 +137,7 @@ class MySoC(wiring.Component):
         csr_decoder.add(spiflash.csr_bus, name="spiflash", addr=self.csr_spiflash_base - self.csr_base)
         m.submodules.spiflash = spiflash
 
+        print(f"spiflash = {spiflash}")
         connect(m, flipped(self.flash), spiflash.pins)
 
         sw.add_periph("spiflash",   "SPIFLASH", self.csr_spiflash_base)
@@ -238,6 +241,11 @@ class MySoC(wiring.Component):
 
         sw.generate("build/software/generated")
         attach_simulation_data(self.flash, file_name="build/software/software.bin", offset=self.bios_start)
+
+        print(f"CSR resources :\n{pformat(list(csr_decoder.bus.memory_map.all_resources()), indent=2)}")
+        print(f"CSR memory map:\n{pformat(csr_decoder.bus.memory_map._namespace._assignments, indent=2)}")
+        print(f"CSR decoder subs:\n{pformat(csr_decoder._subs, indent=2)}")
+        print(f"Wishbone memory map:\n{pformat(wb_decoder.bus.memory_map._namespace._assignments, indent=2)}")
         return m
 
 
