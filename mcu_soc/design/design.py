@@ -1,3 +1,5 @@
+import warnings
+
 from pprint import pformat
 
 from chipflow_lib.platforms.sim import SimPlatform
@@ -7,7 +9,7 @@ from amaranth import Module
 from amaranth.lib import wiring
 from amaranth.lib.wiring import Out, flipped, connect
 
-from amaranth_soc import csr, wishbone
+from amaranth_soc import csr, wishbone, memory
 from amaranth_soc.csr.wishbone import WishboneCSRBridge
 
 from chipflow_digital_ip.base import SoCID
@@ -133,11 +135,11 @@ class MySoC(wiring.Component):
         # SPI flash
 
         spiflash = QSPIFlash(addr_width=24, data_width=32)
-        wb_decoder .add(spiflash.wb_bus, addr=self.mem_spiflash_base)
+        wb_decoder.add(spiflash.wb_bus, name="spiflash", addr=self.mem_spiflash_base)
         csr_decoder.add(spiflash.csr_bus, name="spiflash", addr=self.csr_spiflash_base - self.csr_base)
         m.submodules.spiflash = spiflash
 
-        print(f"spiflash = {spiflash}")
+        print(f"spiflash = {spiflash.csr_bus.memory_map}")
         connect(m, flipped(self.flash), spiflash.pins)
 
         sw.add_periph("spiflash",   "SPIFLASH", self.csr_spiflash_base)
@@ -242,10 +244,54 @@ class MySoC(wiring.Component):
         sw.generate("build/software/generated")
         attach_simulation_data(self.flash, file_name="build/software/software.bin", offset=self.bios_start)
 
-        print(f"CSR resources :\n{pformat(list(csr_decoder.bus.memory_map.all_resources()), indent=2)}")
-        print(f"CSR memory map:\n{pformat(csr_decoder.bus.memory_map._namespace._assignments, indent=2)}")
-        print(f"CSR decoder subs:\n{pformat(csr_decoder._subs, indent=2)}")
-        print(f"Wishbone memory map:\n{pformat(wb_decoder.bus.memory_map._namespace._assignments, indent=2)}")
+        from amaranth.hdl import UnusedElaboratable
+        warnings.simplefilter(action="ignore", category=UnusedElaboratable)
+        resources = { str(ri.path):{
+            "name": ri.path,
+            "start": ri.start,
+            "end": ri.end,
+            "width": ri.width,
+        } for ri in wb_decoder.bus.memory_map.all_resources() if len(ri.path)>1}
+
+        def _translate(subwindow, window, window_name, window_range):
+            # Accessing a resource through a dense and then a sparse window results in very strange
+            # layouts that cannot be easily represented, so reject those.
+            assert window_range[2] == 1 or subwindow.width == window.data_width
+            print(f"translating {subwindow}")
+            path  = subwindow[1] if window_name is None else (window_name, subwindow[1])
+            swstart = subwindow[2][0]
+            swend = subwindow[2][1]
+            swstep = subwindow[2][2]
+            end = swend  // window_range[2]
+            start = (swstart// window_range[2]) + window_range[0]
+            width = (swstart - swend) * window_range[2]
+            print(f"translated to {(subwindow[0], path, (start, end, swstep))}")
+            return (subwindow[0], path, (start, end, swstep))
+        windows = list(wb_decoder.bus.memory_map.windows())
+        map = {}
+        for window, name, win_range in windows:
+            map[name] = f"0x{win_range[0]:x}"
+            print(f"window: {name}")
+            sws = list(window.windows())
+            print("orig windows:")
+            for w in sws:
+                print(w)
+            print("new windows:")
+            for w in sws:
+                print(_translate(w, window, name, win_range))
+            windows.extend([_translate(w, window, name, win_range) for w in sws])
+        print(pformat(map))
+        #print(f"WB windows: {windows}")
+        #print(f"WB resources :\n{pformat(resources, indent=2)}")
+        #print(f"Swgen:\n{pformat(sw.periphs)}")
+
+        for p in sw.periphs:
+            print(p)
+            print(map[p[1].lower()])
+            assert(map[p[1].lower()] == p[2])
+        #print(f"CSR memory map:\n{pformat(csr_decoder.bus.memory_map._namespace._assignments, indent=2)}")
+        #print(f"CSR decoder subs:\n{pformat(csr_decoder._subs, indent=2)}")
+        #print(f"Wishbone memory map:\n{pformat(wb_decoder.bus.memory_map._namespace._assignments, indent=2)}")
         return m
 
 

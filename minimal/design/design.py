@@ -134,6 +134,7 @@ class MySoC(wiring.Component):
 
         sw.add_periph("soc_id",     "SOC_ID",   self.csr_soc_id_base)
 
+        print(soc_id.bus)
         sw.generate("build/software/generated")
         attach_simulation_data(self.flash, file_name="build/software/software.bin", offset=self.bios_start)
         return m
