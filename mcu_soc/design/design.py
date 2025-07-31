@@ -13,7 +13,7 @@ from chipflow_digital_ip.memory import QSPIFlash
 from amaranth_soc.wishbone.sram import WishboneSRAM
 from chipflow_digital_ip.io import GPIOPeripheral, UARTPeripheral, SPIPeripheral, I2CPeripheral
 from chipflow_digital_ip.processors import CV32E40P, OBIDebugModule
-from chipflow_lib.platforms import GPIOSignature, UARTSignature, SPISignature, I2CSignature, QSPIFlashSignature, JTAGSignature
+from chipflow_lib.platforms import GPIOSignature, UARTSignature, SPISignature, I2CSignature, QSPIFlashSignature, JTAGSignature, attach_simulation_data
 from .ips.pwm import PWMPins, PWMPeripheral
 # from .ips.pdm import PDMPeripheral
 
@@ -237,7 +237,7 @@ class MySoC(wiring.Component):
         #sw.add_periph("gpio",       "BTN_GPIO", self.csr_btn_gpio_base)
 
         sw.generate("build/software/generated")
-        #spiflash.load("build/software/generated")
+        attach_simulation_data(self.flash, file_name="build/software/software.bin", offset=self.bios_start)
         return m
 
 
