@@ -10,4 +10,4 @@ software = "design.steps.software:MySoftwareStep"
 
 [chipflow.silicon]
 process = "ihp_sg13g2"
-package = "pga144"
+package = "bga144"

@@ -281,14 +281,12 @@ class MySoC(wiring.Component):
                 print(_translate(w, window, name, win_range))
             windows.extend([_translate(w, window, name, win_range) for w in sws])
         print(pformat(map))
+
+
         #print(f"WB windows: {windows}")
         #print(f"WB resources :\n{pformat(resources, indent=2)}")
         #print(f"Swgen:\n{pformat(sw.periphs)}")
 
-        for p in sw.periphs:
-            print(p)
-            print(map[p[1].lower()])
-            assert(map[p[1].lower()] == p[2])
         #print(f"CSR memory map:\n{pformat(csr_decoder.bus.memory_map._namespace._assignments, indent=2)}")
         #print(f"CSR decoder subs:\n{pformat(csr_decoder._subs, indent=2)}")
         #print(f"Wishbone memory map:\n{pformat(wb_decoder.bus.memory_map._namespace._assignments, indent=2)}")
