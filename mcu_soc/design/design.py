@@ -226,8 +226,8 @@ class MySoC(wiring.Component):
 
         # m.submodules.jtag_provider = platform.providers.JTAGProvider(debug)
 
-        print(f"running in {Path('.').absolute()}, sw = {list(Path('design/software').glob('*.c'))}")
-        sw = SoftwareBuild(Path('design/software').glob('*.c'), offset=self.bios_start)
+        sw = SoftwareBuild(sources=Path('design/software').glob('*.c'),
+                           offset=self.bios_start)
         attach_data(spiflash, sw)
 
         return m
