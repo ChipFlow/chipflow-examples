@@ -1,9 +1,7 @@
 import warnings
 
+from pathlib import Path
 from pprint import pformat
-
-from chipflow_lib.platforms.sim import SimPlatform
-from chipflow_lib.software.soft_gen import SoftwareGenerator
 
 from amaranth import Module
 from amaranth.lib import wiring
@@ -17,7 +15,12 @@ from chipflow_digital_ip.memory import QSPIFlash
 from amaranth_soc.wishbone.sram import WishboneSRAM
 from chipflow_digital_ip.io import GPIOPeripheral, UARTPeripheral, SPIPeripheral, I2CPeripheral
 from chipflow_digital_ip.processors import CV32E40P, OBIDebugModule
-from chipflow_lib.platforms import GPIOSignature, UARTSignature, SPISignature, I2CSignature, QSPIFlashSignature, JTAGSignature, attach_simulation_data
+from chipflow_lib.platforms import (
+        GPIOSignature, UARTSignature, SPISignature, I2CSignature,
+        QSPIFlashSignature, JTAGSignature,
+        attach_data, SoftwareBuild
+        )
+
 from .ips.pwm import PWMPins, PWMPeripheral
 # from .ips.pdm import PDMPeripheral
 
@@ -101,13 +104,6 @@ class MySoC(wiring.Component):
 
         connect(m, wb_arbiter.bus, wb_decoder.bus)
 
-        # Software
-
-        sw = SoftwareGenerator(rom_start=self.bios_start, rom_size=0x00100000,
-                               # place BIOS data in SRAM
-                               ram_start=self.mem_sram_base, ram_size=self.sram_size)
-
-
         # CPU
 
         cpu = CV32E40P(config="default", reset_vector=self.bios_start, dm_haltaddress=self.debug_base+0x800)
@@ -134,15 +130,13 @@ class MySoC(wiring.Component):
         m.submodules.debug = debug
         # SPI flash
 
-        spiflash = QSPIFlash(addr_width=24, data_width=32)
+        spiflash = QSPIFlash(addr_width=25, data_width=32)
         wb_decoder.add(spiflash.wb_bus, name="spiflash", addr=self.mem_spiflash_base)
         csr_decoder.add(spiflash.csr_bus, name="spiflash", addr=self.csr_spiflash_base - self.csr_base)
         m.submodules.spiflash = spiflash
 
         print(f"spiflash = {spiflash.csr_bus.memory_map}")
         connect(m, flipped(self.flash), spiflash.pins)
-
-        sw.add_periph("spiflash",   "SPIFLASH", self.csr_spiflash_base)
 
         # SRAM
 
@@ -157,7 +151,6 @@ class MySoC(wiring.Component):
 
             base_addr = self.csr_user_spi_base + i * self.periph_offset
             csr_decoder.add(user_spi.bus, name=f"user_spi_{i}", addr=base_addr  - self.csr_base)
-            sw.add_periph("spi", f"USER_SPI_{i}", base_addr)
 
             # FIXME: These assignments will disappear once we have a relevant peripheral available
             pins = getattr(self, f"user_spi_{i}")
@@ -170,7 +163,6 @@ class MySoC(wiring.Component):
             gpio = GPIOPeripheral(pin_count=self.gpio_width)
             base_addr = self.csr_gpio_base + i * self.periph_offset
             csr_decoder.add(gpio.bus, name=f"gpio_{i}", addr=base_addr - self.csr_base)
-            sw.add_periph("gpio", f"GPIO_{i}", base_addr)
 
             pins = getattr(self, f"gpio_{i}")
             connect(m, flipped(pins), gpio.pins)
@@ -181,7 +173,6 @@ class MySoC(wiring.Component):
             uart = UARTPeripheral(init_divisor=int(25e6//115200), addr_width=5)
             base_addr = self.csr_uart_base + i * self.periph_offset
             csr_decoder.add(uart.bus, name=f"uart_{i}", addr=base_addr - self.csr_base)
-            sw.add_periph("uart", f"UART_{i}", base_addr)
 
             pins = getattr(self, f"uart_{i}")
             connect(m, flipped(pins), uart.pins)
@@ -194,7 +185,6 @@ class MySoC(wiring.Component):
 
             base_addr = self.csr_i2c_base + i * self.periph_offset
             csr_decoder.add(i2c.bus, name=f"i2c_{i}", addr=base_addr - self.csr_base)
-            sw.add_periph("i2c", f"I2C_{i}", base_addr)
 
             i2c_pins = getattr(self, f"i2c_{i}")
             connect(m, flipped(i2c_pins), i2c.i2c_pins)
@@ -207,7 +197,6 @@ class MySoC(wiring.Component):
             base_addr = self.csr_motor_base + i * self.motor_offset
             csr_decoder.add(motor_pwm.bus, name=f"motor_pwm{i}", addr=base_addr - self.csr_base)
 
-            sw.add_periph("motor_pwm", f"MOTOR_PWM{i}", base_addr)
             setattr(m.submodules, f"motor_pwm{i}", motor_pwm)
 
         # # pdm_ao
@@ -216,7 +205,6 @@ class MySoC(wiring.Component):
         #     base_addr = self.csr_pdm_ao_base + i * self.pdm_ao_offset
         #     csr_decoder.add(pdm.bus, name=f"pdm{i}", addr=base_addr  - self.csr_base)
         # 
-        #     sw.add_periph("pdm", f"PDM{i}", base_addr)
         #     setattr(m.submodules, f"pdm{i}", pdm)
         #     m.d.comb += getattr(self, f"pdm_ao_{i}").eq(pdm.pdm_ao)
 
@@ -238,58 +226,10 @@ class MySoC(wiring.Component):
 
         # m.submodules.jtag_provider = platform.providers.JTAGProvider(debug)
 
-        sw.add_periph("soc_id",     "SOC_ID",   self.csr_soc_id_base)
-        #sw.add_periph("gpio",       "BTN_GPIO", self.csr_btn_gpio_base)
+        print(f"running in {Path('.').absolute()}, sw = {list(Path('design/software').glob('*.c'))}")
+        sw = SoftwareBuild(Path('design/software').glob('*.c'), offset=self.bios_start)
+        attach_data(spiflash, sw)
 
-        sw.generate("build/software/generated")
-        attach_simulation_data(self.flash, file_name="build/software/software.bin", offset=self.bios_start)
-
-        from amaranth.hdl import UnusedElaboratable
-        warnings.simplefilter(action="ignore", category=UnusedElaboratable)
-        resources = { str(ri.path):{
-            "name": ri.path,
-            "start": ri.start,
-            "end": ri.end,
-            "width": ri.width,
-        } for ri in wb_decoder.bus.memory_map.all_resources() if len(ri.path)>1}
-
-        def _translate(subwindow, window, window_name, window_range):
-            # Accessing a resource through a dense and then a sparse window results in very strange
-            # layouts that cannot be easily represented, so reject those.
-            assert window_range[2] == 1 or subwindow.width == window.data_width
-            print(f"translating {subwindow}")
-            path  = subwindow[1] if window_name is None else (window_name, subwindow[1])
-            swstart = subwindow[2][0]
-            swend = subwindow[2][1]
-            swstep = subwindow[2][2]
-            end = swend  // window_range[2]
-            start = (swstart// window_range[2]) + window_range[0]
-            width = (swstart - swend) * window_range[2]
-            print(f"translated to {(subwindow[0], path, (start, end, swstep))}")
-            return (subwindow[0], path, (start, end, swstep))
-        windows = list(wb_decoder.bus.memory_map.windows())
-        map = {}
-        for window, name, win_range in windows:
-            map[name] = f"0x{win_range[0]:x}"
-            print(f"window: {name}")
-            sws = list(window.windows())
-            print("orig windows:")
-            for w in sws:
-                print(w)
-            print("new windows:")
-            for w in sws:
-                print(_translate(w, window, name, win_range))
-            windows.extend([_translate(w, window, name, win_range) for w in sws])
-        print(pformat(map))
-
-
-        #print(f"WB windows: {windows}")
-        #print(f"WB resources :\n{pformat(resources, indent=2)}")
-        #print(f"Swgen:\n{pformat(sw.periphs)}")
-
-        #print(f"CSR memory map:\n{pformat(csr_decoder.bus.memory_map._namespace._assignments, indent=2)}")
-        #print(f"CSR decoder subs:\n{pformat(csr_decoder._subs, indent=2)}")
-        #print(f"Wishbone memory map:\n{pformat(wb_decoder.bus.memory_map._namespace._assignments, indent=2)}")
         return m
 
 
