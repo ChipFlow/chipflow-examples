@@ -1,7 +1,6 @@
 import warnings
 
 from pathlib import Path
-from pprint import pformat
 
 from amaranth import Module
 from amaranth.lib import wiring
@@ -135,7 +134,6 @@ class MySoC(wiring.Component):
         csr_decoder.add(spiflash.csr_bus, name="spiflash", addr=self.csr_spiflash_base - self.csr_base)
         m.submodules.spiflash = spiflash
 
-        print(f"spiflash = {spiflash.csr_bus.memory_map}")
         connect(m, flipped(self.flash), spiflash.pins)
 
         # SRAM
@@ -228,7 +226,9 @@ class MySoC(wiring.Component):
 
         sw = SoftwareBuild(sources=Path('design/software').glob('*.c'),
                            offset=self.bios_start)
-        attach_data(spiflash, sw)
+
+        # you need to attach data to both the internal and external interfaces
+        attach_data(self.flash, m.submodules.spiflash, sw)
 
         return m
 
