@@ -9,7 +9,10 @@ board = "design.steps.board:MyBoardStep"
 software = "design.steps.software:MySoftwareStep"
 
 [chipflow.silicon]
-process = "sky130"
-package = "openframe"
+process = "ihp_sg13g2"
+package = "pga144"
 
-
+[chipflow.silicon.pads]
+# System
+sys_clk   = { type = "clock", loc = "114" }
+sys_rst_n = { type = "reset", loc = "115" }
