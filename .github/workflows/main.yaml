@@ -11,6 +11,9 @@ on:
         description: Test with the release lock
         type: boolean
         default: false
+      ENVIRONMENT:
+        required: true
+        type: environment
 
 env:
   lock_pdm: ${{ ! (github.ref_name == 'refs/heads/latest-release' || inputs.release) }}
@@ -51,6 +54,8 @@ jobs:
         run: pdm run chipflow -vv silicon submit --wait
         env:
           CHIPFLOW_API_KEY: ${{ secrets.CHIPFLOW_API_KEY}}
+          CHIPFLOW_API_ORIGIN: ${{ vars.CHIPFLOW_API_ORIGIN }}
+          CHIPFLOW_BACKEND_VERSION: ${{ vars.CHIPFLOW_BACKEND_VERSION }}
 
   test:
     runs-on: ubuntu-latest
