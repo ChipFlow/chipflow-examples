@@ -15,9 +15,9 @@ requires-python = ">=3.11"
 dependencies = [
     "amaranth[builtin-yosys]>=0.5.1",
     "amaranth-cv32e40p @ git+https://github.com/ChipFlow/amaranth-cv32e40p",
-    "chipflow-digital-ip @ git+https://github.com/ChipFlow/chipflow-digital-ip@shell-support",
+    "chipflow-digital-ip @ git+https://github.com/ChipFlow/chipflow-digital-ip",
     "minerva @ git+https://github.com/minerva-cpu/minerva",
-    "chipflow-lib @ git+https://github.com/ChipFlow/chipflow-lib.git@shell-support",
+    "chipflow-lib @ git+https://github.com/ChipFlow/chipflow-lib.git",
     "ziglang==0.11.0",
     "amaranth-soc @ git+https://github.com/amaranth-lang/amaranth-soc",
 ]
