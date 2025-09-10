@@ -74,7 +74,7 @@ test.cmd = "pytest"
 test-cov.cmd = "pytest --cov=my_design --cov-report=term"
 test-cov-html.cmd = "pytest --cov=my_design --cov-report=html"
 # test-docs.cmd = "sphinx-build -b doctest docs/ docs/_build"
-lint.cmd = "ruff check"
+lint.composite = [ "ruff check {args}", "pyright chipflow_lib"]
 # docs.cmd = "sphinx-build docs/ docs/_build/ -W --keep-going"
 
 
@@ -84,4 +84,5 @@ dev = [
     "ruff>=0.9.2",
     "pytest>=7.2.0",
     "pytest-cov>=0.6",
+    "pyright>=1.1.405",
 ]
