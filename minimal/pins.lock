@@ -1,0 +1,512 @@
+{
+  "process": "ihp_sg13g2",
+  "package": {
+    "package_type": {
+      "type": "_QuadPackageDef",
+      "name": "pga144",
+      "width": 36,
+      "height": 36
+    },
+    "power": {
+      "dvss0": {
+        "type": "power",
+        "pins": [
+          "1"
+        ],
+        "port_name": "dvss0",
+        "direction": null,
+        "invert": null,
+        "options": null
+      },
+      "dvdd0": {
+        "type": "ground",
+        "pins": [
+          "9"
+        ],
+        "port_name": "dvdd0",
+        "direction": null,
+        "invert": null,
+        "options": null
+      },
+      "vss0": {
+        "type": "power",
+        "pins": [
+          "17"
+        ],
+        "port_name": "vss0",
+        "direction": null,
+        "invert": null,
+        "options": null
+      },
+      "vdd0": {
+        "type": "ground",
+        "pins": [
+          "25"
+        ],
+        "port_name": "vdd0",
+        "direction": null,
+        "invert": null,
+        "options": null
+      },
+      "dvss1": {
+        "type": "power",
+        "pins": [
+          "33"
+        ],
+        "port_name": "dvss1",
+        "direction": null,
+        "invert": null,
+        "options": null
+      },
+      "dvdd1": {
+        "type": "ground",
+        "pins": [
+          "41"
+        ],
+        "port_name": "dvdd1",
+        "direction": null,
+        "invert": null,
+        "options": null
+      },
+      "vss1": {
+        "type": "power",
+        "pins": [
+          "49"
+        ],
+        "port_name": "vss1",
+        "direction": null,
+        "invert": null,
+        "options": null
+      },
+      "vdd1": {
+        "type": "ground",
+        "pins": [
+          "57"
+        ],
+        "port_name": "vdd1",
+        "direction": null,
+        "invert": null,
+        "options": null
+      },
+      "dvss2": {
+        "type": "power",
+        "pins": [
+          "65"
+        ],
+        "port_name": "dvss2",
+        "direction": null,
+        "invert": null,
+        "options": null
+      },
+      "dvdd2": {
+        "type": "ground",
+        "pins": [
+          "73"
+        ],
+        "port_name": "dvdd2",
+        "direction": null,
+        "invert": null,
+        "options": null
+      },
+      "vss2": {
+        "type": "power",
+        "pins": [
+          "81"
+        ],
+        "port_name": "vss2",
+        "direction": null,
+        "invert": null,
+        "options": null
+      },
+      "vdd2": {
+        "type": "ground",
+        "pins": [
+          "89"
+        ],
+        "port_name": "vdd2",
+        "direction": null,
+        "invert": null,
+        "options": null
+      },
+      "dvss3": {
+        "type": "power",
+        "pins": [
+          "97"
+        ],
+        "port_name": "dvss3",
+        "direction": null,
+        "invert": null,
+        "options": null
+      },
+      "dvdd3": {
+        "type": "ground",
+        "pins": [
+          "105"
+        ],
+        "port_name": "dvdd3",
+        "direction": null,
+        "invert": null,
+        "options": null
+      },
+      "vss3": {
+        "type": "power",
+        "pins": [
+          "113"
+        ],
+        "port_name": "vss3",
+        "direction": null,
+        "invert": null,
+        "options": null
+      },
+      "vdd3": {
+        "type": "ground",
+        "pins": [
+          "121"
+        ],
+        "port_name": "vdd3",
+        "direction": null,
+        "invert": null,
+        "options": null
+      },
+      "dvss4": {
+        "type": "power",
+        "pins": [
+          "129"
+        ],
+        "port_name": "dvss4",
+        "direction": null,
+        "invert": null,
+        "options": null
+      },
+      "dvdd4": {
+        "type": "ground",
+        "pins": [
+          "137"
+        ],
+        "port_name": "dvdd4",
+        "direction": null,
+        "invert": null,
+        "options": null
+      }
+    },
+    "clocks": {
+      "sys_clk": {
+        "type": "clock",
+        "pins": [
+          "114"
+        ],
+        "port_name": "sys_clk",
+        "direction": "i",
+        "invert": null,
+        "options": null
+      }
+    },
+    "resets": {
+      "sys_rst_n": {
+        "type": "reset",
+        "pins": [
+          "115"
+        ],
+        "port_name": "sys_rst_n",
+        "direction": "i",
+        "invert": null,
+        "options": null
+      }
+    }
+  },
+  "port_map": {
+    "soc": {
+      "flash": {
+        "clk": {
+          "type": "io",
+          "pins": [
+            "122"
+          ],
+          "port_name": "flash_clk",
+          "direction": "o",
+          "invert": null,
+          "options": {
+            "all_have_oe": false,
+            "init": null
+          }
+        },
+        "csn": {
+          "type": "io",
+          "pins": [
+            "123"
+          ],
+          "port_name": "flash_csn",
+          "direction": "o",
+          "invert": null,
+          "options": {
+            "all_have_oe": false,
+            "init": null
+          }
+        },
+        "d": {
+          "type": "io",
+          "pins": [
+            "124",
+            "125",
+            "126",
+            "127"
+          ],
+          "port_name": "flash_d",
+          "direction": "io",
+          "invert": null,
+          "options": {
+            "all_have_oe": true,
+            "init": null
+          }
+        }
+      },
+      "uart_0": {
+        "tx": {
+          "type": "io",
+          "pins": [
+            "138"
+          ],
+          "port_name": "uart_0_tx",
+          "direction": "o",
+          "invert": null,
+          "options": {
+            "all_have_oe": false,
+            "init": null
+          }
+        },
+        "rx": {
+          "type": "io",
+          "pins": [
+            "139"
+          ],
+          "port_name": "uart_0_rx",
+          "direction": "i",
+          "invert": null,
+          "options": {
+            "all_have_oe": false,
+            "init": null
+          }
+        }
+      },
+      "gpio_0": {
+        "gpio": {
+          "type": "io",
+          "pins": [
+            "98",
+            "99",
+            "10",
+            "100",
+            "101",
+            "102",
+            "103",
+            "104"
+          ],
+          "port_name": "gpio_0_gpio",
+          "direction": "io",
+          "invert": null,
+          "options": {
+            "all_have_oe": true,
+            "init": null
+          }
+        }
+      }
+    }
+  },
+  "metadata": {
+    "soc": {
+      "interface": {
+        "members": {
+          "flash": {
+            "type": "interface",
+            "members": {
+              "clk": {
+                "type": "interface",
+                "members": {
+                  "o": {
+                    "type": "port",
+                    "name": "flash__clk__o",
+                    "dir": "out",
+                    "width": 1,
+                    "signed": false,
+                    "init": "0"
+                  }
+                },
+                "annotations": {
+                  "https://api.chipflow.com/schemas/0/pin-annotation": {
+                    "direction": "o",
+                    "width": 1,
+                    "options": {
+                      "all_have_oe": false,
+                      "init": null
+                    }
+                  }
+                }
+              },
+              "csn": {
+                "type": "interface",
+                "members": {
+                  "o": {
+                    "type": "port",
+                    "name": "flash__csn__o",
+                    "dir": "out",
+                    "width": 1,
+                    "signed": false,
+                    "init": "0"
+                  }
+                },
+                "annotations": {
+                  "https://api.chipflow.com/schemas/0/pin-annotation": {
+                    "direction": "o",
+                    "width": 1,
+                    "options": {
+                      "all_have_oe": false,
+                      "init": null
+                    }
+                  }
+                }
+              },
+              "d": {
+                "type": "interface",
+                "members": {
+                  "o": {
+                    "type": "port",
+                    "name": "flash__d__o",
+                    "dir": "out",
+                    "width": 4,
+                    "signed": false,
+                    "init": "0"
+                  },
+                  "oe": {
+                    "type": "port",
+                    "name": "flash__d__oe",
+                    "dir": "out",
+                    "width": 4,
+                    "signed": false,
+                    "init": "0"
+                  },
+                  "i": {
+                    "type": "port",
+                    "name": "flash__d__i",
+                    "dir": "in",
+                    "width": 4,
+                    "signed": false,
+                    "init": "0"
+                  }
+                },
+                "annotations": {
+                  "https://api.chipflow.com/schemas/0/pin-annotation": {
+                    "direction": "io",
+                    "width": 4,
+                    "options": {
+                      "all_have_oe": true,
+                      "init": null
+                    }
+                  }
+                }
+              }
+            },
+            "annotations": {}
+          },
+          "uart_0": {
+            "type": "interface",
+            "members": {
+              "tx": {
+                "type": "interface",
+                "members": {
+                  "o": {
+                    "type": "port",
+                    "name": "uart_0__tx__o",
+                    "dir": "out",
+                    "width": 1,
+                    "signed": false,
+                    "init": "0"
+                  }
+                },
+                "annotations": {
+                  "https://api.chipflow.com/schemas/0/pin-annotation": {
+                    "direction": "o",
+                    "width": 1,
+                    "options": {
+                      "all_have_oe": false,
+                      "init": null
+                    }
+                  }
+                }
+              },
+              "rx": {
+                "type": "interface",
+                "members": {
+                  "i": {
+                    "type": "port",
+                    "name": "uart_0__rx__i",
+                    "dir": "in",
+                    "width": 1,
+                    "signed": false,
+                    "init": "0"
+                  }
+                },
+                "annotations": {
+                  "https://api.chipflow.com/schemas/0/pin-annotation": {
+                    "direction": "i",
+                    "width": 1,
+                    "options": {
+                      "all_have_oe": false,
+                      "init": null
+                    }
+                  }
+                }
+              }
+            },
+            "annotations": {}
+          },
+          "gpio_0": {
+            "type": "interface",
+            "members": {
+              "gpio": {
+                "type": "interface",
+                "members": {
+                  "o": {
+                    "type": "port",
+                    "name": "gpio_0__gpio__o",
+                    "dir": "out",
+                    "width": 8,
+                    "signed": false,
+                    "init": "0"
+                  },
+                  "oe": {
+                    "type": "port",
+                    "name": "gpio_0__gpio__oe",
+                    "dir": "out",
+                    "width": 8,
+                    "signed": false,
+                    "init": "0"
+                  },
+                  "i": {
+                    "type": "port",
+                    "name": "gpio_0__gpio__i",
+                    "dir": "in",
+                    "width": 8,
+                    "signed": false,
+                    "init": "0"
+                  }
+                },
+                "annotations": {
+                  "https://api.chipflow.com/schemas/0/pin-annotation": {
+                    "direction": "io",
+                    "width": 8,
+                    "options": {
+                      "all_have_oe": true,
+                      "init": null
+                    }
+                  }
+                }
+              }
+            },
+            "annotations": {}
+          }
+        },
+        "annotations": {}
+      }
+    }
+  }
+}
