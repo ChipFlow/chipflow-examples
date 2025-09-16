@@ -1,0 +1,3 @@
+[submodule "picosoc_verilog/design/picorv32"]
+	path = picosoc_verilog/design/picorv32
+	url = https://github.com/YosysHQ/picorv32
