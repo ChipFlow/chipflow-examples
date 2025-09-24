@@ -10,3 +10,6 @@ board = "design.steps.board:MyBoardStep"
 [chipflow.silicon]
 process = "ihp_sg13g2"
 package = "pga144"
+
+[chipflow.test]
+event_reference = "design/tests/events_reference.json"
