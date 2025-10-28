@@ -222,11 +222,10 @@ dependencies = [
 
 [[package]]
 name = "chipflow-lib"
-version = "0.1.1.dev326"
-requires_python = "<3.14,>=3.11"
+version = "0.1.1.dev292"
+requires_python = ">=3.11"
 git = "https://github.com/ChipFlow/chipflow-lib.git"
-ref = "refactor/restructure-codebase"
-revision = "827100475c4daa877155a204fbd7f086348db679"
+revision = "5280d73a52bdf519b43877d38926802d19c21041"
 summary = "ChipFlow common tools."
 groups = ["default"]
 dependencies = [
@@ -243,7 +242,6 @@ dependencies = [
     "yowasp-nextpnr-ecp5>=0.7",
     "yowasp-runtime",
     "yowasp-yosys>=0.55.0.3.post946.dev0",
-    "ziglang>=0.15.1",
 ]
 
 [[package]]
