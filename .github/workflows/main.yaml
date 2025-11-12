@@ -31,7 +31,7 @@ jobs:
       - name: Check out source code
         uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
 
       - name: Set up PDM
         uses: pdm-project/setup-pdm@v4
@@ -42,6 +42,15 @@ jobs:
 
       - name: Install dependencies with multirepo
         uses: chipflow/pdm-multirepo@v1
+
+      - name: Cache ~/.cache directory
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache
+          key: cache-${{ runner.os }}-${{ matrix.design }}-${{ hashFiles('**/pyproject.toml', '**/pdm.lock') }}
+          restore-keys: |
+            cache-${{ runner.os }}-${{ matrix.design }}-
+            cache-${{ runner.os }}-
 
       - name: Lock pins
         working-directory: ./${{ matrix.design }}
@@ -74,13 +83,14 @@ jobs:
       - name: Install dependencies with multirepo
         uses: chipflow/pdm-multirepo@v1
 
-      - name: Cache YoWASP build products
+      - name: Cache ~/.cache directory
         uses: actions/cache@v4
         with:
-          path: ~/.cache/YoWASP
-          key: YoWASP-${{ runner.os }}-${{ hashFiles('./.venv/**/*.wasm') }}
+          path: ~/.cache
+          key: cache-${{ runner.os }}-${{ matrix.design }}-${{ hashFiles('**/pyproject.toml', '**/pdm.lock') }}
           restore-keys: |
-            YoWASP-${{ runner.os }}-
+            cache-${{ runner.os }}-${{ matrix.design }}-
+            cache-${{ runner.os }}-
 
       - name: Lock pins
         working-directory: ./${{ matrix.design }}
