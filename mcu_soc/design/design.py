@@ -13,7 +13,7 @@ from chipflow_digital_ip.memory import QSPIFlash
 from amaranth_soc.wishbone.sram import WishboneSRAM
 from chipflow_digital_ip.io import GPIOPeripheral, UARTPeripheral, SPIPeripheral, I2CPeripheral
 from chipflow_digital_ip.processors import CV32E40P, OBIDebugModule
-from chipflow_lib.platforms import (
+from chipflow.platform import (
         GPIOSignature, UARTSignature, SPISignature, I2CSignature,
         QSPIFlashSignature, JTAGSignature,
         attach_data, SoftwareBuild

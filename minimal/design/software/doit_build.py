@@ -4,10 +4,10 @@ from pathlib import Path
 import shutil
 
 from doit import create_after
-import chipflow_lib.config
+import chipflow.config
 
 
-CHIPFLOW_SOFTWARE_DIR = chipflow_lib.config.get_dir_software()
+CHIPFLOW_SOFTWARE_DIR = chipflow.config.get_dir_software()
 BUILD_DIR = "./build/software"
 DESIGN_DIR = os.path.dirname(__file__) + "/.."
 RISCVCC = f"{sys.executable} -m ziglang cc -target riscv32-freestanding-musl"

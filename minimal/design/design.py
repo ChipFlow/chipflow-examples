@@ -15,7 +15,7 @@ from chipflow_digital_ip.io import UARTPeripheral
 
 from minerva.core import Minerva
 
-from chipflow_lib.platforms import Sky130DriveMode, GPIOSignature, UARTSignature, QSPIFlashSignature, attach_data, SoftwareBuild
+from chipflow.platform import Sky130DriveMode, GPIOSignature, UARTSignature, QSPIFlashSignature, attach_data, SoftwareBuild
 
 
 __all__ = ["MySoC"]

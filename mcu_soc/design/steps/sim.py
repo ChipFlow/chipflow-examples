@@ -10,8 +10,8 @@ from doit.task import dict_to_task
 
 from amaranth import *
 from amaranth.back import rtlil
-from chipflow_lib.steps.sim import SimStep
-from chipflow_lib import ChipFlowError
+from chipflow.platform import SimStep
+from chipflow import ChipFlowError
 
 from ..design import MySoC
 from ..sim.doit_build import VARIABLES, TASKS, DOIT_CONFIG
@@ -20,7 +20,7 @@ EXE = ".exe" if os.name == "nt" else ""
 
 @contextmanager
 def common():
-    chipflow_lib = importlib.resources.files('chipflow_lib')
+    chipflow_lib = importlib.resources.files('chipflow')
     common = chipflow_lib.joinpath('common', 'sim')
     with importlib.resources.as_file(common) as f:
         yield f

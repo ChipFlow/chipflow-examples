@@ -1,4 +1,4 @@
-from chipflow_lib.steps.software import SoftwareStep
+from chipflow.platform import SoftwareStep
 from ..software import doit_build
 
 
