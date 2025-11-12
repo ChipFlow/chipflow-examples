@@ -5,7 +5,7 @@ from amaranth.lib import wiring
 from amaranth.lib.wiring import In, Out, flipped, connect
 from amaranth_soc import csr
 
-from chipflow_lib.platforms import OutputIOSignature, SoftwareDriverSignature
+from chipflow.platform import OutputIOSignature, SoftwareDriverSignature
 
 
 __all__ = ["PDMPeripheral"]

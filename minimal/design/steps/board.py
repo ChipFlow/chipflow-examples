@@ -1,6 +1,6 @@
 from amaranth_boards.ulx3s import ULX3S_85F_Platform
 
-from chipflow_lib.steps.board import BoardStep
+from chipflow.platform import BoardStep
 
 from amaranth import *
 from amaranth.lib import wiring

@@ -6,7 +6,7 @@ from amaranth.lib.wiring import In, Out, flipped, connect
 from amaranth.lib.cdc import FFSynchronizer
 from amaranth_soc import csr
 
-from chipflow_lib.platforms import OutputIOSignature, InputIOSignature, SoftwareDriverSignature
+from chipflow.platform import OutputIOSignature, InputIOSignature, SoftwareDriverSignature
 
 __all__ = ["PWMPeripheral", "PWMPins"]
 
