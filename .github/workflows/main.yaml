@@ -5,6 +5,8 @@ on:
       - 'latest-release'
   pull_request:
   merge_group:
+  repository_dispatch:
+    types: [backend-test]
   workflow_dispatch:
     inputs:
       release:
@@ -14,12 +16,17 @@ on:
       ENVIRONMENT:
         required: true
         type: environment
+      backend_version:
+        description: 'Backend version/tag to test against (overrides vars.CHIPFLOW_BACKEND_VERSION)'
+        required: false
+        type: string
 
 env:
   lock_pdm: ${{ ! (github.ref_name == 'refs/heads/latest-release' || inputs.release) }}
+  BACKEND_VERSION: ${{ inputs.backend_version || github.event.client_payload.backend_version || vars.CHIPFLOW_BACKEND_VERSION }}
 
 name: CI
-run-name: ${{ inputs.release && 'Release' || 'CI'}}
+run-name: ${{ github.event_name == 'repository_dispatch' && format('Backend Test - {0}', github.event.client_payload.backend_version) || (inputs.backend_version && format('CI - Backend {0}', inputs.backend_version) || (inputs.release && 'Release' || 'CI')) }}
 jobs:
 
   submit:
@@ -62,7 +69,7 @@ jobs:
         env:
           CHIPFLOW_API_KEY: ${{ secrets.CHIPFLOW_API_KEY}}
           CHIPFLOW_API_ORIGIN: ${{ vars.CHIPFLOW_API_ORIGIN }}
-          CHIPFLOW_BACKEND_VERSION: ${{ vars.CHIPFLOW_BACKEND_VERSION }}
+          CHIPFLOW_BACKEND_VERSION: ${{ env.BACKEND_VERSION }}
 
   test:
     runs-on: ubuntu-latest
