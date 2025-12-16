@@ -27,7 +27,7 @@ pdm install
 ```
 
 ## Set up the environment
-Generate your API key at https://build.chipflow.org/user/detail. Click on 'Create/Refresh API Key', and your new API key will appear at the top. Copy it now, as you will not see it again!
+Generate your API key at https://build.chipflow.com/user/detail. Click on 'Create/Refresh API Key', and your new API key will appear at the top. Copy it now, as you will not see it again!
 
 ![Image showing a newly generated API Key](docs/assets/api-key.png)
 
@@ -80,7 +80,7 @@ This should return something like:
 ```
 INFO:chipflow_lib.steps.silicon:Submitting c23dab6-dirty for project chipflow-examples-minimal
 INFO:chipflow_lib.steps.silicon:Submitted design: {'build_id': '3f51a69c-b3e3-4fd3-88fd-52826ac5e5dd'}
-Design submitted successfully! Build URL: https://build-staging.chipflow.org//build/3f51a69c-b3e3-4fd3-88fd-52826ac5e5dd
+Design submitted successfully! Build URL: https://build.chipflow.com/build/3f51a69c-b3e3-4fd3-88fd-52826ac5e5dd
 ```
 
 Your design will now start building: pictures and logs of the build are available at build URL that is returned, once it is complete.
