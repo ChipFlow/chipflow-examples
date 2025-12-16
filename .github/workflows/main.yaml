@@ -37,6 +37,18 @@ jobs:
       matrix:
         design: ['mcu_soc', 'minimal']
     steps:
+      - name: Parse PR body for backend version override
+        id: pr-config
+        if: github.event_name == 'pull_request'
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          # Extract BACKEND_VERSION from PR body (format: BACKEND_VERSION: <value>)
+          if [[ "$PR_BODY" =~ BACKEND_VERSION:[[:space:]]*([^[:space:]]+) ]]; then
+            echo "backend_version=${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
+            echo "Found BACKEND_VERSION override: ${BASH_REMATCH[1]}"
+          fi
+
       - name: Check out source code
         uses: actions/checkout@v4
 
@@ -71,7 +83,8 @@ jobs:
         env:
           CHIPFLOW_API_KEY: ${{ secrets.CHIPFLOW_API_KEY}}
           CHIPFLOW_API_ORIGIN: ${{ vars.CHIPFLOW_API_ORIGIN }}
-          CHIPFLOW_BACKEND_VERSION: ${{ env.BACKEND_VERSION }}
+          # Priority: PR body override > workflow input > repository_dispatch > vars
+          CHIPFLOW_BACKEND_VERSION: ${{ steps.pr-config.outputs.backend_version || env.BACKEND_VERSION }}
           CHIPFLOW_BUILD_MODE: ${{ env.BUILD_MODE }}
 
   test:
