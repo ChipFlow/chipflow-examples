@@ -117,3 +117,34 @@ jobs:
         working-directory: ./${{ matrix.design }}
         run: |
           pdm run chipflow silicon submit --dry-run
+
+  report-status:
+    # Report status back to chipflow-backend for repository_dispatch triggers
+    if: always() && github.event_name == 'repository_dispatch'
+    needs: [submit, test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Determine overall status
+        id: status
+        run: |
+          if [[ "${{ needs.submit.result }}" == "success" && "${{ needs.test.result }}" == "success" ]]; then
+            echo "state=success" >> $GITHUB_OUTPUT
+            echo "description=All integration tests passed" >> $GITHUB_OUTPUT
+          else
+            echo "state=failure" >> $GITHUB_OUTPUT
+            echo "description=Integration tests failed (submit: ${{ needs.submit.result }}, test: ${{ needs.test.result }})" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Report status to chipflow-backend
+        env:
+          GH_TOKEN: ${{ secrets.BACKEND_STATUS_TOKEN }}
+        run: |
+          gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            /repos/ChipFlow/chipflow-backend/statuses/${{ github.event.client_payload.backend_sha }} \
+            -f state='${{ steps.status.outputs.state }}' \
+            -f target_url='${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}' \
+            -f description='${{ steps.status.outputs.description }}' \
+            -f context='chipflow-examples/backend-test'
