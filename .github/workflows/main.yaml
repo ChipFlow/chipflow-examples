@@ -20,10 +20,20 @@ on:
         description: 'Backend version/tag to test against (overrides vars.CHIPFLOW_BACKEND_VERSION)'
         required: false
         type: string
+      build_mode:
+        description: 'Build mode: full (P&R, GDS, LVS) or synth_only (synthesis only)'
+        required: false
+        type: choice
+        options:
+          - synth_only
+          - full
+        default: synth_only
 
 env:
   lock_pdm: ${{ ! (github.ref_name == 'refs/heads/latest-release' || inputs.release) }}
   BACKEND_VERSION: ${{ inputs.backend_version || github.event.client_payload.backend_version || vars.CHIPFLOW_BACKEND_VERSION }}
+  # Use synth_only for regular CI (faster), full for backend-test (tests complete pipeline)
+  BUILD_MODE: ${{ inputs.build_mode || (github.event_name == 'repository_dispatch' && 'full') || 'synth_only' }}
 
 name: CI
 run-name: ${{ github.event_name == 'repository_dispatch' && format('Backend Test - {0}', github.event.client_payload.backend_version) || (inputs.backend_version && format('CI - Backend {0}', inputs.backend_version) || (inputs.release && 'Release' || 'CI')) }}
@@ -70,6 +80,7 @@ jobs:
           CHIPFLOW_API_KEY: ${{ secrets.CHIPFLOW_API_KEY}}
           CHIPFLOW_API_ORIGIN: ${{ vars.CHIPFLOW_API_ORIGIN }}
           CHIPFLOW_BACKEND_VERSION: ${{ env.BACKEND_VERSION }}
+          CHIPFLOW_BUILD_MODE: ${{ env.BUILD_MODE }}
 
   test:
     runs-on: ubuntu-latest
