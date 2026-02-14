@@ -33,6 +33,7 @@ jobs:
 
   submit:
     runs-on: ubuntu-latest
+    environment: ${{ inputs.ENVIRONMENT || 'staging' }}
     strategy:
       matrix:
         design: ['mcu_soc', 'minimal']
