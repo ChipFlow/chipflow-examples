@@ -20,12 +20,20 @@ on:
         description: 'Backend version/tag to test against (overrides vars.CHIPFLOW_BACKEND_VERSION)'
         required: false
         type: string
+      build_mode:
+        description: 'Build mode (synth_only is faster, full includes P&R and GDS)'
+        required: false
+        type: choice
+        default: synth_only
+        options:
+          - synth_only
+          - full
 
 env:
   lock_pdm: ${{ ! (github.ref_name == 'refs/heads/latest-release' || inputs.release) }}
   BACKEND_VERSION: ${{ inputs.backend_version || github.event.client_payload.backend_version || vars.CHIPFLOW_BACKEND_VERSION }}
-  # Use synth_only for all CI (faster), full only for backend-test (tests complete pipeline)
-  BUILD_MODE: ${{ github.event_name == 'repository_dispatch' && 'full' || 'synth_only' }}
+  # repository_dispatch (backend-test) always uses full; workflow_dispatch uses input; others default to synth_only
+  BUILD_MODE: ${{ github.event_name == 'repository_dispatch' && 'full' || inputs.build_mode || 'synth_only' }}
 
 name: CI
 run-name: ${{ github.event_name == 'repository_dispatch' && format('Backend Test - {0}', github.event.client_payload.backend_version) || (inputs.backend_version && format('CI - Backend {0}', inputs.backend_version) || (inputs.release && 'Release' || 'CI')) }}
