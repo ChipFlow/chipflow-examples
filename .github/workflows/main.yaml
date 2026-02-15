@@ -44,7 +44,7 @@ jobs:
     environment: ${{ inputs.ENVIRONMENT || 'staging' }}
     strategy:
       matrix:
-        design: ['mcu_soc', 'minimal']
+        design: ['mcu_soc', 'minimal', 'picosoc_verilog']
     steps:
       - name: Parse PR body for backend version override
         id: pr-config
@@ -60,6 +60,8 @@ jobs:
 
       - name: Check out source code
         uses: actions/checkout@v4
+        with: 
+          submodules: true
 
       - uses: actions/setup-python@v5
 
@@ -100,10 +102,12 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        design: ['mcu_soc', 'minimal']
+        design: ['mcu_soc', 'minimal', 'picosoc_verilog']
     steps:
       - name: Check out source code
         uses: actions/checkout@v4
+        with: 
+          submodules: true
 
       - name: Set up PDM
         uses: pdm-project/setup-pdm@v4

@@ -1,0 +1,15 @@
+[chipflow]
+project_name = "chipflow-examples-picosoc"
+
+[chipflow.top]
+soc = "design.design:MySoC"
+
+[chipflow.steps]
+software = "design.steps.software:MySoftwareStep"
+
+[chipflow.silicon]
+process = "sky130"
+package = "openframe"
+
+[chipflow.test]
+event_reference = "design/tests/events_reference.json"
